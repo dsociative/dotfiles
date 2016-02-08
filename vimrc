@@ -46,7 +46,10 @@ NeoBundle 'rhysd/vim-clang-format'
 NeoBundle 'rust-lang/rust.vim'
 NeoBundle 'chase/vim-ansible-yaml'
 NeoBundle 'zenorocha/dracula-theme', {'rtp': 'vim/'}
-
+NeoBundle 'fatih/molokai'
+NeoBundle 'the31k/vim-colors-tayra'
+NeoBundle 'KKPMW/moonshine-vim'
+NeoBundle 'Valloric/YouCompleteMe'
 " Required:
 call neobundle#end()
 
@@ -92,7 +95,7 @@ nnoremap <leader>y :<C-u>Unite -buffer-name=yank history/yank<CR>
 
 set paste
 
-set noexpandtab shiftwidth=4 softtabstop=4 tabstop=4
+set expandtab shiftwidth=4 softtabstop=4 tabstop=4
 set nolist
 set listchars=tab:▹\ ,trail:▿
 
@@ -141,13 +144,19 @@ let g:pymode_breakpoint = 0
 let g:pymode_rope = 0
 
 let g:go_disable_autoinstall = 1
-let g:go_bin_path = "~/bin"
+let g:go_bin_path = expand("~/go/bin")
 let g:go_fmt_command = "goimports"
 au FileType go nmap <Leader>ds <Plug>(go-def-split)
 au FileType go nmap <Leader>i <Plug>(go-info)
 au FileType go nmap gd <Plug>(go-def)
 au FileType go nmap <Leader>gd <Plug>(go-doc)
 au FileType go nmap <leader>b <Plug>(go-build)
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_structs = 1
+let g:go_highlight_interfaces = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_build_constraints = 1
 
 let g:clang_format#code_style = "llvm"
 let g:clang_format#auto_format = 0
@@ -211,3 +220,4 @@ endif
 
 let g:ansible_options = {'ignore_blank_lines': 0}
 let g:ansible_options = {'documentation_mapping': '<C-K>'}
+colorscheme moonshine
