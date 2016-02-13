@@ -29,7 +29,8 @@ NeoBundle 'Shougo/neoyank.vim'
 NeoBundle 'ctrlpvim/ctrlp.vim'
 NeoBundle 'fatih/vim-go'
 NeoBundle 'klen/python-mode'
-NeoBundle 'bling/vim-airline'
+NeoBundle 'vim-airline/vim-airline'
+NeoBundle 'vim-airline/vim-airline-themes'
 NeoBundle 'majutsushi/tagbar'
 NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'tpope/vim-surround'
@@ -37,19 +38,17 @@ NeoBundle 'tpope/vim-markdown'
 NeoBundle 'vim-pandoc/vim-pandoc'
 NeoBundle 'vim-pandoc/vim-pandoc-syntax'
 NeoBundle 'scrooloose/nerdcommenter'
-NeoBundle 'altercation/vim-colors-solarized'
+NeoBundle 'scrooloose/nerdtree.git'
 NeoBundle 'ervandew/supertab'
-NeoBundle 'jplaut/vim-arduino-ino'
 NeoBundle 'xolox/vim-misc'
 NeoBundle 'xolox/vim-easytags'
 NeoBundle 'rhysd/vim-clang-format'
 NeoBundle 'rust-lang/rust.vim'
 NeoBundle 'chase/vim-ansible-yaml'
-NeoBundle 'zenorocha/dracula-theme', {'rtp': 'vim/'}
 NeoBundle 'fatih/molokai'
-NeoBundle 'the31k/vim-colors-tayra'
-NeoBundle 'KKPMW/moonshine-vim'
 NeoBundle 'Valloric/YouCompleteMe'
+NeoBundle 'SirVer/ultisnips'
+
 " Required:
 call neobundle#end()
 
@@ -126,13 +125,14 @@ let g:ctrlp_user_command = 'pt --nocolor -g=. %s'
 let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
 
 if !exists('g:airline_symbols')
-	let g:airline_symbols = {}
+    let g:airline_symbols = {}
 endif
+
 let g:airline_symbols.linenr = '␤ '
 let g:airline_symbols.paste = 'ρ'
 let g:airline_left_sep = '»'
 let g:airline_right_sep = '«'
-"let g:airline_theme='solarized'
+let g:airline_theme='dark'
 let g:airline#extensions#syntastic#enabled = 0
 
 let g:pymode_lint_cwindow = 0
@@ -151,12 +151,13 @@ au FileType go nmap <Leader>i <Plug>(go-info)
 au FileType go nmap gd <Plug>(go-def)
 au FileType go nmap <Leader>gd <Plug>(go-doc)
 au FileType go nmap <leader>b <Plug>(go-build)
-let g:go_highlight_functions = 1
-let g:go_highlight_methods = 1
-let g:go_highlight_structs = 1
-let g:go_highlight_interfaces = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_build_constraints = 1
+"let g:go_highlight_functions = 1
+"let g:go_highlight_methods = 1
+"let g:go_highlight_structs = 1
+"let g:go_highlight_interfaces = 1
+"let g:go_highlight_operators = 1
+"let g:go_highlight_build_constraints = 1
+let g:go_term_enabled = 0
 
 let g:clang_format#code_style = "llvm"
 let g:clang_format#auto_format = 0
@@ -218,6 +219,16 @@ if has('gui_running')
 else
 endif
 
+let g:NERDTreeWinPos = "right"
+
 let g:ansible_options = {'ignore_blank_lines': 0}
 let g:ansible_options = {'documentation_mapping': '<C-K>'}
-colorscheme moonshine
+colorscheme molokai
+
+" Snippets
+let g:UltiSnipsExpandTrigger="<C-e>"
+let g:UltiSnipsJumpForwardTrigger="<c-l>"
+let g:UltiSnipsJumpBackwardTrigger="<c-h>"
+
+let g:syntastic_go_checkers = ['golint', 'govet', 'errcheck']
+let g:syntastic_mode_map = { 'mode': 'active', 'passive_filetypes': ['go'] }
