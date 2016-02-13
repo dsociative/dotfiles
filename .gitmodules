@@ -1,0 +1,3 @@
+[submodule "adio"]
+	path = adio
+	url = https://github.com/adrianolaru/adio-theme.git
