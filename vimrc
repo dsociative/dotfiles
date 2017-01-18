@@ -48,6 +48,25 @@ NeoBundle 'chase/vim-ansible-yaml'
 NeoBundle 'fatih/molokai'
 NeoBundle 'Valloric/YouCompleteMe'
 NeoBundle 'SirVer/ultisnips'
+NeoBundle 'easymotion/vim-easymotion'
+NeoBundle 'dracula/vim'
+NeoBundle 'dkprice/vim-easygrep'
+
+"Navigation
+" <Leader>f{char} to move to {char}
+map  <Leader>f <Plug>(easymotion-bd-f)
+nmap <Leader>f <Plug>(easymotion-overwin-f)
+
+" s{char}{char} to move to {char}{char}
+nmap s <Plug>(easymotion-overwin-f2)
+
+" Move to line
+map <Leader>L <Plug>(easymotion-bd-jk)
+nmap <Leader>L <Plug>(easymotion-overwin-line)
+
+" Move to word
+map  <Leader>w <Plug>(easymotion-bd-w)
+nmap <Leader>w <Plug>(easymotion-overwin-w)
 
 " Required:
 call neobundle#end()
@@ -95,6 +114,9 @@ nnoremap <leader>y :<C-u>Unite -buffer-name=yank history/yank<CR>
 set paste
 
 set expandtab shiftwidth=4 softtabstop=4 tabstop=4
+autocmd FileType make set noexpandtab shiftwidth=8 softtabstop=0
+autocmd FileType yaml retab
+
 set nolist
 set listchars=tab:▹\ ,trail:▿
 
@@ -119,6 +141,7 @@ set laststatus=2
 set number
 set cursorline
 set hidden
+set autowrite
 
 let g:ctrlp_cmd = 'CtrlPMixed'
 let g:ctrlp_user_command = 'pt --nocolor -g=. %s'
@@ -132,7 +155,7 @@ let g:airline_symbols.linenr = '␤ '
 let g:airline_symbols.paste = 'ρ'
 let g:airline_left_sep = '»'
 let g:airline_right_sep = '«'
-let g:airline_theme='dark'
+let g:airline_theme='simple theme'
 let g:airline#extensions#syntastic#enabled = 0
 
 let g:pymode_lint_cwindow = 0
@@ -146,17 +169,18 @@ let g:pymode_rope = 0
 let g:go_disable_autoinstall = 1
 let g:go_bin_path = expand("~/go/bin")
 let g:go_fmt_command = "goimports"
+au FileType go nmap <Leader>t <Plug>(go-test)
 au FileType go nmap <Leader>ds <Plug>(go-def-split)
 au FileType go nmap <Leader>i <Plug>(go-info)
 au FileType go nmap gd <Plug>(go-def)
 au FileType go nmap <Leader>gd <Plug>(go-doc)
 au FileType go nmap <leader>b <Plug>(go-build)
-"let g:go_highlight_functions = 1
-"let g:go_highlight_methods = 1
-"let g:go_highlight_structs = 1
-"let g:go_highlight_interfaces = 1
-"let g:go_highlight_operators = 1
-"let g:go_highlight_build_constraints = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_structs = 1
+let g:go_highlight_interfaces = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_build_constraints = 1
 let g:go_term_enabled = 0
 
 let g:clang_format#code_style = "llvm"
@@ -184,7 +208,7 @@ set pastetoggle=<F2>
 set invpaste
 set mouse=a
 
-nnoremap <leader>w :PyLintWindowToggle<CR>
+nnoremap <leader>p :PyLintWindowToggle<CR>
 nnoremap <F3> :cnext<CR>
 nnoremap <S-F3> :cprev<CR>
 nnoremap s :exec "normal i".nr2char(getchar())."\e"<CR>
@@ -212,9 +236,11 @@ ab shabang #!/usr/bin/python
 ab utf8 # coding: utf-8
 ab ifmain if __name__ == "__main__":
 
+" Remove trailing spaces
+autocmd BufWritePre * %s/\s\+$//e
 
 if has('gui_running')
-	color dracula
+    color dracula
     set guifont=Terminus\ 10
 else
 endif
@@ -223,12 +249,9 @@ let g:NERDTreeWinPos = "right"
 
 let g:ansible_options = {'ignore_blank_lines': 0}
 let g:ansible_options = {'documentation_mapping': '<C-K>'}
-colorscheme molokai
+colorscheme dracula
 
 " Snippets
 let g:UltiSnipsExpandTrigger="<C-e>"
 let g:UltiSnipsJumpForwardTrigger="<c-l>"
 let g:UltiSnipsJumpBackwardTrigger="<c-h>"
-
-let g:syntastic_go_checkers = ['golint', 'govet', 'errcheck']
-let g:syntastic_mode_map = { 'mode': 'active', 'passive_filetypes': ['go'] }
