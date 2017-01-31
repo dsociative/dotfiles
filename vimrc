@@ -146,6 +146,7 @@ set autowrite
 
 let g:ctrlp_cmd = 'CtrlPMixed'
 let g:ctrlp_user_command = 'pt --nocolor -g=. %s'
+let g:ctrlp_working_path_mode = 'ra'
 let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
 
 if !exists('g:airline_symbols')
@@ -156,7 +157,6 @@ let g:airline_symbols.linenr = '␤ '
 let g:airline_symbols.paste = 'ρ'
 let g:airline_left_sep = '»'
 let g:airline_right_sep = '«'
-let g:airline_theme='simple theme'
 let g:airline#extensions#syntastic#enabled = 0
 
 let g:pymode_lint_cwindow = 0
