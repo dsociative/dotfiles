@@ -1,11 +1,11 @@
 * {
     font-family: FontAwesome, Zed Mono;
-    font-size: 12px;
+    font-size: 14px;
 }
 
 window#waybar {
     background-color: #282828;
-    border-bottom: 3px solid #3c3836;
+    border-bottom: 1px solid #3c3836;
     color: #ebdbb2;
     transition-property: background-color;
     transition-duration: .5s;
