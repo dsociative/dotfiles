@@ -1,0 +1,31 @@
+[font]
+size = 16.0
+
+[general]
+import = ["~/.config/alacritty/flatwhite.toml"]
+
+[font.normal]
+family = "ZedMono Nerd Font Mono"
+style = "Extended"
+
+[font.bold]
+family = "ZedMono Nerd Font Mono"
+style = "Extended Bold"
+
+[font.italic]
+family = "ZedMono Nerd Font Mono"
+style = "Extended Italic"
+
+[window]
+padding = { x = 8, y = 8 }
+opacity = 0.95
+
+[cursor.style]
+shape = "Block"
+blinking = "Off"
+
+[scrolling]
+history = 10000
+
+[env]
+TERM = "xterm-256color"

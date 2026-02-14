@@ -1,0 +1,43 @@
+#!/bin/bash
+
+CONF="$HOME/.config/dotfiles-private/mattermost.conf"
+if [[ ! -f "$CONF" ]]; then
+  echo "Config not found: $CONF"
+  exit 1
+fi
+source "$CONF"
+
+if [[ "$1" != "dark" && "$1" != "light" ]]; then
+  echo "Usage: $0 <dark|light>"
+  exit 1
+fi
+
+# Mattermost credentials from Firefox cookies
+cp ~/.mozilla/firefox/*.default-release/cookies.sqlite /tmp/ff-cookies.sqlite
+MM_TOKEN=$(sqlite3 /tmp/ff-cookies.sqlite \
+  "SELECT value FROM moz_cookies WHERE name='MMAUTHTOKEN' AND host LIKE '$MM_HOST' LIMIT 1")
+MM_USER_ID=$(sqlite3 /tmp/ff-cookies.sqlite \
+  "SELECT value FROM moz_cookies WHERE name='MMUSERID' AND host LIKE '$MM_HOST' LIMIT 1")
+rm /tmp/ff-cookies.sqlite
+
+if [[ -z "$MM_TOKEN" || -z "$MM_USER_ID" ]]; then
+  echo "Failed to get Mattermost credentials from Firefox cookies"
+  exit 1
+fi
+
+GRUVBOX='{"sidebarBg":"#282828","sidebarText":"#ebdbb2","sidebarUnreadText":"#fbf1c7","sidebarTextHoverBg":"#3c3836","sidebarTextActiveBorder":"#458588","sidebarTextActiveColor":"#ebdbb2","sidebarHeaderBg":"#1d2021","sidebarHeaderTextColor":"#ebdbb2","sidebarTeamBarBg":"#1d2021","onlineIndicator":"#98971a","awayIndicator":"#d79921","dndIndicator":"#cc241d","mentionBg":"#458588","mentionBj":"#458588","mentionColor":"#ebdbb2","centerChannelBg":"#282828","centerChannelColor":"#ebdbb2","newMessageSeparator":"#689d6a","linkColor":"#83a598","buttonBg":"#458588","buttonColor":"#ebdbb2","errorTextColor":"#fb4934","mentionHighlightBg":"#504945","mentionHighlightLink":"#8ec07c","codeTheme":"monokai"}'
+
+FLATWHITE='{"sidebarBg":"#f7f3ee","sidebarText":"#605a52","sidebarUnreadText":"#4a4440","sidebarTextHoverBg":"#e8e4df","sidebarTextActiveBorder":"#4c7a90","sidebarTextActiveColor":"#4a4440","sidebarHeaderBg":"#ede9e4","sidebarHeaderTextColor":"#605a52","sidebarTeamBarBg":"#e8e4df","onlineIndicator":"#799a37","awayIndicator":"#c0913a","dndIndicator":"#d55b4f","mentionBg":"#4c7a90","mentionBj":"#4c7a90","mentionColor":"#ffffff","centerChannelBg":"#f7f3ee","centerChannelColor":"#605a52","newMessageSeparator":"#54a07e","linkColor":"#4c7a90","buttonBg":"#4c7a90","buttonColor":"#ffffff","errorTextColor":"#d55b4f","mentionHighlightBg":"#e0dbd2","mentionHighlightLink":"#54a07e","codeTheme":"github"}'
+
+if [[ "$1" == "dark" ]]; then
+  THEME="$GRUVBOX"
+else
+  THEME="$FLATWHITE"
+fi
+
+curl -s -X PUT "$MM_URL/api/v4/users/$MM_USER_ID/preferences" \
+  -H "Authorization: Bearer $MM_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "[{\"user_id\":\"$MM_USER_ID\",\"category\":\"theme\",\"name\":\"\",\"value\":$(echo "$THEME" | jq -Rs .)}]"
+
+echo "Mattermost theme switched"

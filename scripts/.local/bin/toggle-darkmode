@@ -1,0 +1,17 @@
+#!/bin/bash
+
+CURRENT=$(dconf read /org/gnome/desktop/interface/color-scheme)
+if [[ "$CURRENT" == "'prefer-dark'" ]]; then
+  # Switch to light
+  dconf write /org/gnome/desktop/interface/color-scheme "'default'"
+  sed -i 's|import = \[.*\]|import = ["~/.config/alacritty/flatwhite.toml"]|' \
+    ~/.config/alacritty/alacritty.toml
+  # Emacs (если doom)
+  emacsclient -e '(progn (mapc #'\''disable-theme custom-enabled-themes) (load-theme '\''doom-flatwhite t))' 2>/dev/null
+else
+  # Switch to dark
+  dconf write /org/gnome/desktop/interface/color-scheme "'prefer-dark'"
+  sed -i 's|import = \[.*\]|import = ["~/.config/alacritty/gruvbox.toml"]|' \
+    ~/.config/alacritty/alacritty.toml
+  emacsclient -e '(progn (mapc #'\''disable-theme custom-enabled-themes) (load-theme '\''doom-gruvbox t))' 2>/dev/null
+fi
