@@ -404,7 +404,7 @@ binds {
     Mod+S { spawn "sh" "-c" "grim -g \"$(slurp -d)\" - | wl-copy"; }
     Mod+N { spawn "toggle-darkmode"; }
     // Suggested binds for running programs: terminal, app launcher, screen locker.
-    Mod+Q hotkey-overlay-title="Open a Terminal: foot" { spawn "foot"; }
+    Mod+Q hotkey-overlay-title="Open a Terminal: foot" { spawn "foot-launch"; }
     Mod+R hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
     Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
 

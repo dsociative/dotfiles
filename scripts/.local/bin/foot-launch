@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [[ "$(dconf read /org/gnome/desktop/interface/color-scheme)" == "'prefer-dark'" ]]; then
+  exec foot -o initial-color-theme=1 "$@"
+else
+  exec foot -o initial-color-theme=2 "$@"
+fi
