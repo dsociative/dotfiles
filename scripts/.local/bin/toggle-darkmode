@@ -4,20 +4,19 @@ CURRENT=$(dconf read /org/gnome/desktop/interface/color-scheme)
 if [[ "$CURRENT" == "'prefer-dark'" ]]; then
   # Switch to light
   dconf write /org/gnome/desktop/interface/color-scheme "'default'"
-  sed -i 's|import = \[.*\]|import = ["~/.config/alacritty/flatwhite.toml"]|' \
-    ~/.config/alacritty/alacritty.toml
-  # Emacs (если doom)
   emacsclient -e '(progn (mapc #'\''disable-theme custom-enabled-themes) (load-theme '\''doom-flatwhite t))' 2>/dev/null
   ln -sf flatwhite.css ~/.config/waybar/style.css
   killall -SIGUSR2 waybar
+  killall -SIGUSR1 foot 2>/dev/null
+  sed -i --follow-symlinks 's|background-color "#[0-9a-fA-F]*"|background-color "#f7f3ee"|g' ~/.config/niri/config.kdl
   mattermost_theme_switch light 2>/dev/null &
 else
   # Switch to dark
   dconf write /org/gnome/desktop/interface/color-scheme "'prefer-dark'"
-  sed -i 's|import = \[.*\]|import = ["~/.config/alacritty/gruvbox.toml"]|' \
-    ~/.config/alacritty/alacritty.toml
   emacsclient -e '(progn (mapc #'\''disable-theme custom-enabled-themes) (load-theme '\''doom-gruvbox t))' 2>/dev/null
   ln -sf gruvbox.css ~/.config/waybar/style.css
   killall -SIGUSR2 waybar
+  killall -SIGUSR2 foot 2>/dev/null
+  sed -i --follow-symlinks 's|background-color "#[0-9a-fA-F]*"|background-color "#282828"|g' ~/.config/niri/config.kdl
   mattermost_theme_switch dark 2>/dev/null &
 fi

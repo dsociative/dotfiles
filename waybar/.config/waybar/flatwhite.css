@@ -1,14 +1,12 @@
 * {
-    font-family: FontAwesome, Zed Mono;
-    font-size: 12px;
+    font-family: "ZedMono Nerd Font Mono";
+    font-size: 14px;
 }
 
 window#waybar {
     background-color: #f7f3ee;
-    border-bottom: 1px solid #e8e4df;
+    border-bottom: 1px solid #e4ddd2;
     color: #605a52;
-    transition-property: background-color;
-    transition-duration: .5s;
 }
 
 window#waybar.hidden {
@@ -16,15 +14,15 @@ window#waybar.hidden {
 }
 
 @keyframes pulse {
-    0% { background-color: #d55b4f; }
-    50% { background-color: #b33a2e; }
-    100% { background-color: #d55b4f; }
+    0% { background-color: #f6cfcb; }
+    50% { background-color: #f00000; color: #ffffff; }
+    100% { background-color: #f6cfcb; }
 }
 
 #language.ru {
     animation: pulse 0.5s ease-in-out infinite;
-    background-color: #d55b4f;
-    color: #ffffff;
+    background-color: #f6cfcb;
+    color: #5b4343;
     font-weight: bold;
     border-radius: 4px;
 }
@@ -41,7 +39,8 @@ button:hover {
 }
 
 #pulseaudio:hover {
-    background-color: #a87628;
+    background-color: #f08c00;
+    color: #ffffff;
 }
 
 #workspaces button {
@@ -55,16 +54,17 @@ button:hover {
 }
 
 #workspaces button.focused {
-    background-color: #e8e4df;
+    background-color: #e4ddd2;
     box-shadow: inset 0 -3px #605a52;
 }
 
 #workspaces button.urgent {
-    background-color: #d55b4f;
+    background-color: #f6cfcb;
+    color: #5b4343;
 }
 
 #mode {
-    background-color: #e8e4df;
+    background-color: #e4ddd2;
     box-shadow: inset 0 -3px #605a52;
 }
 
@@ -86,7 +86,6 @@ button:hover {
 #power-profiles-daemon,
 #mpd {
     padding: 0 10px;
-    color: #ffffff;
 }
 
 #window,
@@ -103,38 +102,42 @@ button:hover {
 }
 
 #clock {
-    background-color: #4c7a90;
+    background-color: #dde4f2;
+    color: #4c5361;
 }
 
 #cpu {
-    background-color: #799a37;
-    color: #ffffff;
+    background-color: #e2e9c1;
+    color: #525643;
 }
 
 #memory {
-    background-color: #9868b1;
+    background-color: #f1ddf1;
+    color: #614c61;
 }
 
 #temperature {
-    background-color: #c0913a;
+    background-color: #f7e0c3;
+    color: #5b5143;
 }
 
 #temperature.critical {
-    background-color: #d55b4f;
-}
-
-#pulseaudio {
-    background-color: #c0913a;
+    background-color: #f00000;
     color: #ffffff;
 }
 
+#pulseaudio {
+    background-color: #f7e0c3;
+    color: #5b5143;
+}
+
 #pulseaudio.muted {
-    background-color: #e8e4df;
-    color: #a09a92;
+    background-color: #e4ddd2;
+    color: #b9a992;
 }
 
 #tray {
-    background-color: #e8e4df;
+    background-color: #e4ddd2;
     color: #605a52;
 }
 
@@ -144,21 +147,24 @@ button:hover {
 
 #tray > .needs-attention {
     -gtk-icon-effect: highlight;
-    background-color: #d55b4f;
+    background-color: #f6cfcb;
+    color: #5b4343;
 }
 
 #language {
-    background: #54a07e;
-    color: #ffffff;
+    background: #d2ebe3;
+    color: #465953;
     padding: 0 5px;
     margin: 0 5px;
     min-width: 16px;
 }
 
 #network {
-    background-color: #4c7a90;
+    background-color: #dde4f2;
+    color: #4c5361;
 }
 
 #network.disconnected {
-    background-color: #d55b4f;
+    background-color: #f00000;
+    color: #ffffff;
 }

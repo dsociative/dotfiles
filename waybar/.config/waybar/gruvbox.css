@@ -1,5 +1,5 @@
 * {
-    font-family: FontAwesome, Zed Mono;
+    font-family: "ZedMono Nerd Font Mono";
     font-size: 14px;
 }
 
@@ -7,8 +7,6 @@ window#waybar {
     background-color: #282828;
     border-bottom: 1px solid #3c3836;
     color: #ebdbb2;
-    transition-property: background-color;
-    transition-duration: .5s;
 }
 
 window#waybar.hidden {
@@ -116,7 +114,7 @@ button:hover {
 }
 
 #temperature {
-    background-color: #d65d0e;
+    background-color: #fe8019;
 }
 
 #temperature.critical {
