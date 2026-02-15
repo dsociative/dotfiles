@@ -97,7 +97,7 @@ output "DP-2" {
 
     // You can use integer or fractional scale, for example use 1.5 for 150% scale.
     scale 1.5
-    background-color "#f7f3ee"
+    background-color "#282828"
 
     // Transform allows to rotate the output counter-clockwise, valid values are:
     // normal, 90, 180, 270, flipped, flipped-90, flipped-180 and flipped-270.
@@ -129,7 +129,7 @@ output "DP-1" {
 
     // You can use integer or fractional scale, for example use 1.5 for 150% scale.
     scale 1.5
-    background-color "#f7f3ee"
+    background-color "#282828"
 
     // Transform allows to rotate the output counter-clockwise, valid values are:
     // normal, 90, 180, 270, flipped, flipped-90, flipped-180 and flipped-270.
@@ -208,13 +208,13 @@ layout {
         // - CSS-like notation: "rgb(255, 127, 0)", rgba(), hsl() and a few others.
 
         // Color of the ring on the active monitor.
-        active-color "#7fc8ff"
+        active-color "#458588"
 
         // Color of the ring on inactive monitors.
         //
         // The focus ring only draws around the active window, so the only place
         // where you can see its inactive-color is on other monitors.
-        inactive-color "#505050"
+        inactive-color "#458588"
 
         // You can also use gradients. They take precedence over solid colors.
         // Gradients are rendered the same as CSS linear-gradient(angle, from, to).
@@ -239,8 +239,8 @@ layout {
         off
 
         width 4
-        active-color "#ffc87f"
-        inactive-color "#505050"
+        active-color "#458588"
+        inactive-color "#458588"
 
         // Color of the border around windows that request your attention.
         urgent-color "#9b0000"
@@ -357,6 +357,11 @@ window-rule {
     // You can get away with just app-id="wezterm" if you want.
     match app-id=r#"^org\.wezfurlong\.wezterm$"#
     default-column-width {}
+}
+
+window-rule {
+    match app-id="foot"
+    draw-border-with-background false
 }
 
 // Open the Firefox picture-in-picture player as floating by default.

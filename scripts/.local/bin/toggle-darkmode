@@ -8,7 +8,11 @@ if [[ "$CURRENT" == "'prefer-dark'" ]]; then
   ln -sf flatwhite.css ~/.config/waybar/style.css
   killall -SIGUSR2 waybar
   killall -SIGUSR2 foot 2>/dev/null
-  sed -i --follow-symlinks 's|background-color "#[0-9a-fA-F]*"|background-color "#f7f3ee"|g' ~/.config/niri/config.kdl
+  sed -i --follow-symlinks \
+    -e 's|background-color "#[0-9a-fA-F]*"|background-color "#f7f3ee"|g' \
+    -e 's|active-color "#[0-9a-fA-F]*"|active-color "#6a4dff"|' \
+    ~/.config/niri/config.kdl
+  gsettings set org.gnome.desktop.interface gtk-theme Flatwhite
   mattermost_theme_switch light 2>/dev/null &
 else
   # Switch to dark
@@ -17,6 +21,10 @@ else
   ln -sf gruvbox.css ~/.config/waybar/style.css
   killall -SIGUSR2 waybar
   killall -SIGUSR1 foot 2>/dev/null
-  sed -i --follow-symlinks 's|background-color "#[0-9a-fA-F]*"|background-color "#282828"|g' ~/.config/niri/config.kdl
+  sed -i --follow-symlinks \
+    -e 's|background-color "#[0-9a-fA-F]*"|background-color "#282828"|g' \
+    -e 's|active-color "#[0-9a-fA-F]*"|active-color "#458588"|' \
+    ~/.config/niri/config.kdl
+  gsettings set org.gnome.desktop.interface gtk-theme Gruvbox
   mattermost_theme_switch dark 2>/dev/null &
 fi

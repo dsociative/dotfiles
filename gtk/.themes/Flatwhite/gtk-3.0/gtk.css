@@ -1,0 +1,11 @@
+@import url("resource:///org/gtk/libgtk/theme/Adwaita/gtk-contained.css");
+
+@define-color theme_bg_color #f7f3ee;
+@define-color theme_fg_color #605a52;
+@define-color theme_base_color #f1ece4;
+@define-color theme_text_color #605a52;
+@define-color theme_selected_bg_color #6a4dff;
+@define-color theme_selected_fg_color #ffffff;
+@define-color borders #e4ddd2;
+@define-color headerbar_color #f7f3ee;
+@define-color headerbar_backdrop_color #f7f3ee;
