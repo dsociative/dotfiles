@@ -1,0 +1,93 @@
+#!/bin/bash
+set -euo pipefail
+
+# Install all dependencies for dotfiles configs on Arch Linux
+
+PACMAN_PACKAGES=(
+  # Core: niri compositor + wayland
+  niri
+  xdg-desktop-portal-gnome
+
+  # Terminal & shell
+  foot
+
+  # Status bar
+  waybar
+
+  # Launcher & notifications
+  fuzzel
+
+  # Screenshots & clipboard
+  grim
+  slurp
+  wl-clipboard
+
+  # Screen lock
+  swaylock
+
+  # Audio
+  pipewire
+  wireplumber
+  pavucontrol
+
+  # Fonts
+  ttf-zed-mono-nerd
+
+  # Emacs
+  emacs
+
+  # Development: LSP servers & tools
+  rust-analyzer
+  gopls
+  pyright
+  go
+  rustup
+
+  # Emacs org-mode: export & diagrams
+  gnuplot
+  texlive-basic
+  texlive-latexextra
+
+  # CLI tools used by emacs & scripts
+  ripgrep
+  stow
+  jq
+  curl
+  sqlite
+
+  # GTK theming
+  dconf
+  gsettings-desktop-schemas
+
+  # GPG
+  gnupg
+)
+
+echo "Installing pacman packages..."
+sudo pacman -S --needed "${PACMAN_PACKAGES[@]}"
+
+# AUR packages (via yay/paru)
+AUR_PACKAGES=(
+  mermaid-cli
+)
+
+if command -v yay &>/dev/null; then
+  AUR_HELPER=yay
+elif command -v paru &>/dev/null; then
+  AUR_HELPER=paru
+else
+  echo "Warning: no AUR helper (yay/paru) found, skipping AUR packages: ${AUR_PACKAGES[*]}"
+  AUR_HELPER=""
+fi
+
+if [[ -n "$AUR_HELPER" ]]; then
+  echo "Installing AUR packages via $AUR_HELPER..."
+  "$AUR_HELPER" -S --needed "${AUR_PACKAGES[@]}"
+fi
+
+# Stow all packages
+echo "Stowing dotfiles..."
+cd "$(dirname "$(readlink -f "$0")")/../../../"
+stow emacs foot gnupg gtk niri scripts waybar
+
+echo "Done."

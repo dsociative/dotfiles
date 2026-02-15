@@ -10,11 +10,13 @@ Personal dotfiles repository for an Arch Linux setup, managed with GNU Stow. Eac
 
 Repository uses GNU Stow layout. Each package mirrors the home directory hierarchy:
 
-- `alacritty/.config/alacritty/` - Alacritty terminal config with color theme files (gruvbox dark, flatwhite light)
 - `emacs/.emacs.d/` - Emacs init.el and modular config split into feature files
+- `foot/.config/foot/` - Foot terminal config with dual color themes
+- `gnupg/.gnupg/` - GPG agent config
+- `gtk/.themes/` - Gruvbox/Flatwhite GTK3 themes
 - `niri/.config/niri/` - Niri Wayland compositor config (KDL format)
 - `waybar/.config/waybar/` - Waybar status bar config and styling
-- `scripts/.local/bin/` - Shell scripts for theme switching
+- `scripts/.local/bin/` - Shell scripts for theme switching and dependency installation
 
 ## Emacs Modules
 
@@ -27,7 +29,7 @@ The Emacs config is split by concern in `emacs/.emacs.d/config/`. Each file prov
 
 ## Niri
 
-Wayland compositor (scrollable tiling). Dual 4K monitors (DP-1, DP-2) at scale 1.5. Keyboard layout: us,ru with Win+Space toggle. Vim-style navigation (Mod+HJKL). Key binds: Mod+Q terminal (alacritty), Mod+R launcher (fuzzel), Mod+S screenshot (grim+slurp), Mod+F maximize, Mod+C close. Spawns waybar at startup.
+Wayland compositor (scrollable tiling). Dual 4K monitors (DP-1, DP-2) at scale 1.5. Keyboard layout: us,ru with Win+Space toggle. Vim-style navigation (Mod+HJKL). Key binds: Mod+Q terminal (foot), Mod+R launcher (fuzzel), Mod+S screenshot (grim+slurp), Mod+F maximize, Mod+C close. Spawns waybar at startup.
 
 ## Waybar
 
@@ -35,8 +37,10 @@ Top bar with modules: workspaces, window title, language indicator (pulsing red 
 
 ## Scripts
 
-- **toggle-darkmode** - Toggles system-wide dark/light theme: switches GNOME color-scheme (dconf), Alacritty color theme (gruvbox/flatwhite), and Emacs theme (doom-gruvbox/doom-flatwhite) via emacsclient
+- **toggle-darkmode** - Toggles system-wide dark/light theme: dconf, foot, emacs, waybar, niri, GTK theme, mattermost
+- **foot-launch** - Launches foot with correct color theme based on current dconf setting
 - **mattermost_theme_switch** - Switches Mattermost sidebar theme to match dark/light mode, reads auth tokens from Firefox cookies. Endpoint config in `~/.config/dotfiles-private/mattermost.conf`
+- **install-deps** - Installs all Arch Linux packages required by these configs (pacman + AUR)
 
 ## Key Conventions
 
@@ -51,8 +55,12 @@ Top bar with modules: workspaces, window title, language indicator (pulsing red 
 
 ```bash
 cd ~/dotfiles
-stow alacritty emacs niri waybar scripts
+install-deps  # or: scripts/.local/bin/install-deps
 ```
+
+## Maintaining install-deps
+
+When adding new external tools or dependencies to any config, update `scripts/.local/bin/install-deps` accordingly.
 
 ## Credentials
 
