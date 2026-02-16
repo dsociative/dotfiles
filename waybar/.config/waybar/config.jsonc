@@ -119,7 +119,7 @@
         "format": "{:L%A %H:%M}"
     },
     "cpu": {
-        "format": "{usage}% ",
+        "format": "{usage}%  ",
         "tooltip": false
     },
     "memory": {
