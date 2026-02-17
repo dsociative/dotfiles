@@ -196,6 +196,9 @@
   :after (treemacs evil)
   :ensure t)
 
+(use-package nerd-icons
+  :ensure t)
+
 (use-package doom-themes
   :config
   (setq doom-themes-treemacs-theme "doom-colors")

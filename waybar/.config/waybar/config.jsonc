@@ -40,20 +40,13 @@
         // "custom/power"
     ],
     // Modules configuration
-    "hyprland/workspaces": {
-        "disable-scroll": true,
-        "all-outputs": true,
-        "warp-on-scroll": false,
-        "format": "{name}: {icon}",
+    "niri/workspaces": {
+        "format": "{name}:{icon}",
         "format-icons": {
-            "3": "",
-            "1": "",
-            "2": "",
-            "4": "",
-            "5": "",
-            "urgent": "",
-            "focused": "",
-            "active": ""
+            "0": " ",
+            "1": " ",
+            "2": " ",
+            "3": " "
         }
     },
     "keyboard-state": {
@@ -123,7 +116,7 @@
         "tooltip": false
     },
     "memory": {
-        "format": "{}% "
+        "format": "{}%  "
     },
     "temperature": {
         // "thermal-zone": 2,

@@ -146,8 +146,14 @@
      (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
      (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
      (rust "https://github.com/tree-sitter/tree-sitter-rust")
-     (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+     (yaml "https://github.com/ikatyang/tree-sitter-yaml")
+     (tlaplus "https://github.com/tlaplus-community/tree-sitter-tlaplus")))
 
+(setq treesit-font-lock-level 4)
+
+(use-package tla-ts-mode
+  :straight (:host github :repo "dsociative/tla-ts-mode")
+  :mode "\\.tla\\'")
 
 (use-package smerge-mode
   :ensure nil
