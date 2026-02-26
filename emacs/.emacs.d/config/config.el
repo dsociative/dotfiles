@@ -326,6 +326,7 @@
 
 (use-package flycheck-golangci-lint
   :ensure t
+  :custom (flycheck-golangci-lint-executable "golangci-lint")
   :hook (go-mode . flycheck-golangci-lint-setup))
 
 (use-package company

@@ -34,6 +34,28 @@
                       :stream t
                       :key (my/auth-source-key "api.deepseek.com")))
 
+(use-package vterm
+  :ensure t
+  :custom
+  (vterm-timer-delay 0.1)
+  :config
+  (defun my/vterm-skip-redraw-when-hidden (orig-fn buffer)
+    "Skip vterm redraw when buffer is not visible or in copy-mode."
+    (when (and (buffer-live-p buffer)
+               (get-buffer-window buffer))
+      (unless (buffer-local-value 'vterm-copy-mode buffer)
+        (funcall orig-fn buffer))))
+  (advice-add 'vterm--delayed-redraw :around #'my/vterm-skip-redraw-when-hidden))
+
+(use-package cond-let
+  :straight (:host github :repo "tarsius/cond-let"))
+
+(use-package claude-code-ide
+  :straight (:host github :repo "manzaltu/claude-code-ide.el")
+  :custom
+  (claude-code-ide-cli-path (expand-file-name "~/.local/bin/claude"))
+  :bind ("C-c C-a" . claude-code-ide))
+
 (use-package mcp
   :ensure t
   :after gptel

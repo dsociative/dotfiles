@@ -153,7 +153,9 @@
 
 (use-package tla-ts-mode
   :straight (:host github :repo "dsociative/tla-ts-mode")
-  :mode "\\.tla\\'")
+  :mode "\\.tla\\'"
+  :init
+  (add-to-list 'org-src-lang-modes '("tlaplus" . tla-ts)))
 
 (use-package smerge-mode
   :ensure nil
@@ -225,6 +227,30 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
   ;; Below are the default values
   (elysium-window-size 0.33) ; The elysium buffer will be 1/3 your screen
   (elysium-window-style 'vertical)) ; Can be customized to horizontal
+
+(use-package ox-hugo :after ox)
+
+(defun my/export-research-to-hugo ()
+  "Export all research .org files to Hugo, removing stale garden pages."
+  (interactive)
+  (let ((exported-slugs nil)
+        (garden-dir (expand-file-name "~/study/home/content/ru/garden/")))
+    ;; Export all .org files, collect slugs
+    (dolist (f (directory-files "~/study/docs/roam/research/" t "\\.org$"))
+      (with-current-buffer (find-file-noselect f)
+        (org-hugo-export-wim-to-md :all-subtrees)
+        (org-element-map (org-element-parse-buffer) 'headline
+          (lambda (hl)
+            (let ((slug (org-element-property :EXPORT_FILE_NAME hl)))
+              (when slug (push slug exported-slugs)))))))
+    ;; Delete .md files in garden that have no source .org
+    (dolist (md (directory-files garden-dir t "\\.md$"))
+      (let ((name (file-name-sans-extension (file-name-nondirectory md))))
+        (unless (or (string= name "_index")
+                    (member name exported-slugs))
+          (delete-file md)
+          (message "Deleted stale: %s" md)))))
+  (message "Research exported to Hugo."))
 
 (require 'ox-html)
 (require 'nxml-mode)

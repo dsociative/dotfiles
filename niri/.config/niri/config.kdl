@@ -28,6 +28,8 @@ input {
             // localectl set-x11-keymap.
         }
 
+        track-layout "window"
+
         // Enable numlock on startup, omitting this setting disables it.
         numlock
     }
@@ -69,8 +71,8 @@ input {
     }
 
     // Uncomment this to make the mouse warp to the center of newly focused windows.
-    warp-mouse-to-focus
-    focus-follows-mouse
+    // warp-mouse-to-focus
+    // focus-follows-mouse
 
     // Focus windows and outputs automatically when moving the mouse into them.
     // Setting max-scroll-amount="0%" makes it work only on windows already fully on screen.
@@ -97,7 +99,7 @@ output "DP-2" {
 
     // You can use integer or fractional scale, for example use 1.5 for 150% scale.
     scale 1.5
-    background-color "#282828"
+    background-color "#f7f3ee"
 
     // Transform allows to rotate the output counter-clockwise, valid values are:
     // normal, 90, 180, 270, flipped, flipped-90, flipped-180 and flipped-270.
@@ -129,7 +131,7 @@ output "DP-1" {
 
     // You can use integer or fractional scale, for example use 1.5 for 150% scale.
     scale 1.5
-    background-color "#282828"
+    background-color "#f7f3ee"
 
     // Transform allows to rotate the output counter-clockwise, valid values are:
     // normal, 90, 180, 270, flipped, flipped-90, flipped-180 and flipped-270.
@@ -208,13 +210,13 @@ layout {
         // - CSS-like notation: "rgb(255, 127, 0)", rgba(), hsl() and a few others.
 
         // Color of the ring on the active monitor.
-        active-color "#458588"
+        active-color "#6a4dff"
 
         // Color of the ring on inactive monitors.
         //
         // The focus ring only draws around the active window, so the only place
         // where you can see its inactive-color is on other monitors.
-        inactive-color "#458588"
+        inactive-color "#6a4dff"
 
         // You can also use gradients. They take precedence over solid colors.
         // Gradients are rendered the same as CSS linear-gradient(angle, from, to).
@@ -239,8 +241,8 @@ layout {
         off
 
         width 4
-        active-color "#458588"
-        inactive-color "#458588"
+        active-color "#6a4dff"
+        inactive-color "#6a4dff"
 
         // Color of the border around windows that request your attention.
         urgent-color "#9b0000"
@@ -392,10 +394,10 @@ window-rule {
     clip-to-geometry true
 }
 
-workspace "0"
-workspace "1"
-workspace "2"
-workspace "3"
+workspace "1";
+workspace "2";
+workspace "3";
+workspace "4";
 
 binds {
     // Keys consist of modifiers separated by + signs, followed by an XKB key name
@@ -558,26 +560,26 @@ binds {
     //
     // For example, with 2 workspaces + 1 empty, indices 3, 4, 5 and so on
     // will all refer to the 3rd workspace.
-    Mod+0 { focus-workspace "0"; }
-    Mod+1 { focus-workspace "1"; }
-    Mod+2 { focus-workspace "2"; }
-    Mod+3 { focus-workspace "3"; }
+    Mod+1 { focus-workspace 1; }
+    Mod+2 { focus-workspace 2; }
+    Mod+3 { focus-workspace 3; }
     Mod+4 { focus-workspace 4; }
     Mod+5 { focus-workspace 5; }
     Mod+6 { focus-workspace 6; }
     Mod+7 { focus-workspace 7; }
     Mod+8 { focus-workspace 8; }
     Mod+9 { focus-workspace 9; }
-    Mod+Shift+0 { move-column-to-workspace "0"; }
-    Mod+Shift+1 { move-column-to-workspace "1"; }
-    Mod+Shift+2 { move-column-to-workspace "2"; }
-    Mod+Shift+3 { move-column-to-workspace "3"; }
+    Mod+0 { focus-workspace 0; }
+    Mod+Shift+1 { move-column-to-workspace 1; }
+    Mod+Shift+2 { move-column-to-workspace 2; }
+    Mod+Shift+3 { move-column-to-workspace 3; }
     Mod+Shift+4 { move-column-to-workspace 4; }
     Mod+Shift+5 { move-column-to-workspace 5; }
     Mod+Shift+6 { move-column-to-workspace 6; }
     Mod+Shift+7 { move-column-to-workspace 7; }
     Mod+Shift+8 { move-column-to-workspace 8; }
     Mod+Shift+9 { move-column-to-workspace 9; }
+    Mod+Shift+0 { move-column-to-workspace 0; }
 
     // Alternatively, there are commands to move just a single window:
     // Mod+Ctrl+1 { move-window-to-workspace 1; }

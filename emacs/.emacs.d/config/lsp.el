@@ -9,7 +9,7 @@
 
 (use-package eglot
   :ensure t
-  :hook (rust-mode . eglot-ensure)  ; автоматически для rust
+  :hook ((rust-mode go-mode) . eglot-ensure)
   :config
   ;; Настройки rust-analyzer через eglot
   (setq-default eglot-workspace-configuration
@@ -26,6 +26,9 @@
             (lambda ()
               (when (bound-and-true-p eglot--managed-mode)
                 (eglot-format-buffer))))
+
+  ;; Отключить лампочку code actions на номерах строк
+  (setq eglot-code-action-indicator nil)
 
   ;; Кастомные кибинды для eglot
   (with-eval-after-load 'eglot
