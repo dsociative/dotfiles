@@ -108,12 +108,12 @@
       (directory-files-recursively "~/study/docs/roam" "org")
       )
 
-(setq pixel-scroll-precision-mode t)
+(pixel-scroll-precision-mode 1)
 
 (define-key evil-motion-state-map (kbd "SPC") nil)
 (define-key evil-motion-state-map (kbd "`") 'consult-buffer)
-(define-key evil-motion-state-map (kbd "SPC p") 'consult-projectile-switch-project)
-(define-key evil-motion-state-map (kbd "SPC v") 'projectile-vc)
+(define-key evil-motion-state-map (kbd "SPC p") 'consult-project-extra-find)
+(define-key evil-motion-state-map (kbd "SPC v") 'magit-status)
 (define-key evil-motion-state-map (kbd "SPC b") 'consult-buffer)
 (define-key evil-motion-state-map (kbd "SPC h") 'evil-window-left)
 (define-key evil-motion-state-map (kbd "SPC j") 'evil-window-down)
@@ -148,6 +148,13 @@
      (rust "https://github.com/tree-sitter/tree-sitter-rust")
      (yaml "https://github.com/ikatyang/tree-sitter-yaml")
      (tlaplus "https://github.com/tlaplus-community/tree-sitter-tlaplus")))
+
+(use-package treesit-auto
+  :ensure t
+  :custom
+  (treesit-auto-install 'prompt)
+  :config
+  (global-treesit-auto-mode))
 
 (setq treesit-font-lock-level 4)
 
@@ -197,16 +204,8 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
   )
 
 
-(use-package edbi)
 (use-package envrc
   :hook (after-init . envrc-global-mode))
-
-(use-package lsp-pyright
-  :ensure t
-  :custom (lsp-pyright-langserver-command "pyright") ;; or basedpyright
-  :hook (python-mode . (lambda ()
-                          (require 'lsp-pyright)
-                          (lsp))))  ; or lsp-deferred
 
 (use-package evil-org
   :ensure t

@@ -9,7 +9,7 @@
 
 (use-package eglot
   :ensure t
-  :hook ((rust-mode go-mode) . eglot-ensure)
+  :hook ((rust-mode rust-ts-mode go-mode go-ts-mode python-mode python-ts-mode typescript-mode typescript-ts-mode) . eglot-ensure)
   :config
   ;; Настройки rust-analyzer через eglot
   (setq-default eglot-workspace-configuration
@@ -28,7 +28,7 @@
                 (eglot-format-buffer))))
 
   ;; Отключить лампочку code actions на номерах строк
-  (setq eglot-code-action-indicator nil)
+  (setq eglot-code-action-indicator "")
 
   ;; Кастомные кибинды для eglot
   (with-eval-after-load 'eglot
@@ -50,7 +50,7 @@
             (evil-collection-define-key 'normal 'go-mode-map
               "gd" 'xref-find-definitions)))
 
-(evil-global-set-key 'normal "f" 'consult-projectile-find-file)
+(evil-global-set-key 'normal "f" 'consult-project-extra-find)
 (evil-collection-define-key 'normal 'go-mode-map "F" 'go-goto-function)
 (evil-collection-define-key 'normal 'go-mode-map "R" 'go-goto-return-values)
 

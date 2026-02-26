@@ -4,7 +4,7 @@
 (defun my/setup-fonts ()
   "Setup fonts for frame."
   (when (display-graphic-p)
-    (set-frame-font "Zed Mono Extended 16" nil t)))
+    (set-frame-font "CaskaydiaCove Nerd Font 16" nil t)))
 
 (if (daemonp)
     (add-hook 'after-make-frame-functions
@@ -107,11 +107,19 @@
 (add-hook 'before-save-hook #'delete-trailing-whitespace)
 (setq require-final-newline t)
 
-(use-package all-the-icons)
+(use-package ligature
+  :ensure t
+  :config
+  (ligature-set-ligatures 'prog-mode
+    '("==" "!=" ">=" "<=" "&&" "||" "::" "->" "=>" "++" "--"
+      "<<" ">>" "/*" "*/" "//" "/**" "!!" "??" "?." "?:"
+      ".." "..." "##" "###" "####" "|>" "<|" ">>=" "<<="
+      "<>" "+++" "www" "~~" "~@" "~~>" "<~~" "%%"))
+  (global-ligature-mode t))
 
-(use-package all-the-icons-dired
-  :after all-the-icons
-  :hook (dired-mode . all-the-icons-dired-mode))
+(use-package nerd-icons-dired
+  :ensure t
+  :hook (dired-mode . nerd-icons-dired-mode))
 
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 (add-to-list 'default-frame-alist '(tool-bar-lines . 0))
@@ -139,8 +147,6 @@
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
 
-(use-package ripgrep)
-
 (use-package vterm)
 
 (setq mouse-wheel-scroll-amount '(3 ((shift) . 3))) ;; one line at a time
@@ -165,11 +171,6 @@
   :ensure t
   )
 
-(use-package move-text
-  :config
-  (move-text-default-bindings)
-  )
-
 (use-package indent-tools :ensure t)
 (global-set-key (kbd "C-c >") 'indent-tools-hydra/body)
 
@@ -181,12 +182,8 @@
   :ensure t
   :config
   (setq treemacs-position 'right)
-  (set-face-font 'treemacs-root-face "Zed Mono Extended 18")
+  (set-face-font 'treemacs-root-face "CaskaydiaCove Nerd Font 18")
   )
-
-(use-package treemacs-projectile
-  :after (treemacs projectile)
-  :ensure t)
 
 (use-package treemacs-magit
   :after (treemacs magit)
@@ -229,7 +226,6 @@
       browse-url-generic-program "firefox")
 
 (use-package restclient)
-(use-package company-restclient)
 (use-package ob-restclient)
 (use-package es-mode
   :hook (es-result-mode . hs-minor-mode))
@@ -303,10 +299,10 @@
 
 ;; 3
 
-(use-package telephone-line
+(use-package doom-modeline
   :ensure t
   :init
-  (telephone-line-mode 1))
+  (doom-modeline-mode 1))
 
 ;; Golang section
 (use-package gotest
@@ -316,26 +312,33 @@
 (use-package git-timemachine
   :ensure t)
 
-(use-package git-gutter
+(use-package diff-hl
   :ensure t
   :init
-  (global-git-gutter-mode +1)
+  (global-diff-hl-mode)
   :config
-  (setq git-gutter:update-interval 0.2)
-  )
+  (diff-hl-flydiff-mode)
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 
-(use-package flycheck-golangci-lint
-  :ensure t
-  :custom (flycheck-golangci-lint-executable "golangci-lint")
-  :hook (go-mode . flycheck-golangci-lint-setup))
+(savehist-mode 1)
 
-(use-package company
+(use-package corfu
   :ensure t
+  :custom
+  (corfu-auto t)
+  (corfu-auto-delay 0)
+  (corfu-auto-prefix 1)
+  :init
+  (global-corfu-mode)
+  (corfu-history-mode 1)
   :config
-  ;; Optionally enable completion-as-you-type behavior.
-  (setq company-idle-delay 0)
-  (setq company-minimum-prefix-length 1))
-(add-hook 'after-init-hook 'global-company-mode)
+  (add-to-list 'savehist-additional-variables 'corfu-history))
+
+(use-package cape
+  :ensure t
+  :init
+  (add-hook 'completion-at-point-functions #'cape-dabbrev)
+  (add-hook 'completion-at-point-functions #'cape-file))
 
 (use-package lua-mode)
 
@@ -343,22 +346,10 @@
 (use-package yaml-mode :ensure t)
 (use-package dockerfile-mode :ensure t)
 
-(use-package flycheck
-  :ensure t
-  :init (global-flycheck-mode))
-
 ;; Support
-(use-package which-key
-  :ensure t
-  :config
-  (which-key-mode))
+(which-key-mode 1)
 
 (global-set-key (kbd "C-\\") 'comment-or-uncomment-region)
-
-(use-package projectile
-  :ensure t
-  :init
-  (projectile-mode +1))
 
 (use-package vertico
   :init
@@ -394,11 +385,9 @@
          )
   )
 
-(use-package consult-projectile
-         :bind (
-                ("M-p p" . consult-projectile)
-                )
-         )
+(use-package consult-project-extra
+  :ensure t
+  :bind (("M-p p" . consult-project-extra-find)))
 
 (use-package embark-consult
   :ensure t
@@ -409,9 +398,7 @@
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
 
-(use-package consult-flycheck)
-
-(global-set-key (kbd "<f6>") 'consult-flycheck)
+(global-set-key (kbd "<f6>") 'consult-flymake)
 
 (use-package embark
   :ensure t
@@ -455,15 +442,6 @@
   :init
   (setq typescript-indent-level 2)
   :ensure t)
-
-(use-package tide
-  :ensure t
-  :after (typescript-mode company flycheck)
-  :hook ((typescript-mode . tide-setup)
-         (typescript-mode . tide-hl-identifier-mode)
-         (before-save . tide-format-before-save)))
-
-
 
 
 (define-key key-translation-map (kbd "ESC") (kbd "C-g"))
