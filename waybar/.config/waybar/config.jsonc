@@ -7,11 +7,14 @@
     "spacing": 0, // Gaps between modules (4px)
     // Choose the order of the modules
     "modules-left": [
-        "niri/workspaces"
+        "niri/workspaces",
+        "hyprland/workspaces"
     ],
     "modules-center": [
         "niri/language",
-        "niri/window"
+        "hyprland/language",
+        "niri/window",
+        "hyprland/window"
     ],
     "niri/window": {
         "format": "{}",
@@ -57,6 +60,29 @@
             "locked": "",
             "unlocked": ""
         }
+    },
+    "hyprland/workspaces": {
+        "format": "{name} {windows}",
+        "format-window-separator": " ",
+        "window-rewrite-default": "",
+        "window-rewrite": {
+            "class<firefox>": "",
+            "class<foot>": "",
+            "class<emacs>": "",
+            "class<chromium>": "",
+            "class<telegram>": "",
+            "class<steam>": "",
+            "class<Mattermost>": "󰭹"
+        }
+    },
+    "hyprland/window": {
+        "format": "{}",
+        "separate-outputs": true
+    },
+    "hyprland/language": {
+        "format": "{}",
+        "format-en": "EN",
+        "format-ru": "<span background='#cc241d' foreground='#fbf1c7' weight='bold'> RU </span>"
     },
     "hyprland/submap": {
         "format": "<span style=\"italic\">{}</span>"
