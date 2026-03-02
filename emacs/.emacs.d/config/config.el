@@ -79,7 +79,8 @@
   (setq evil-undo-system 'undo-fu)
   :config
   (evil-mode 1)
-  )
+  (unless (display-graphic-p)
+    (setq evil-esc-delay 0.3)))
 
 (use-package evil-collection
   :after evil
@@ -444,6 +445,8 @@
   :ensure t)
 
 
-(define-key key-translation-map (kbd "ESC") (kbd "C-g"))
+;; ESC→C-g only in GUI (breaks Meta in terminal over SSH)
+(when (display-graphic-p)
+  (define-key key-translation-map (kbd "ESC") (kbd "C-g")))
 
 (setq-default evil-shift-width tab-width)
