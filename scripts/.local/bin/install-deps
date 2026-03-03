@@ -10,6 +10,7 @@ PACMAN_PACKAGES=(
 
   # Terminal & shell
   foot
+  kitty
 
   # Status bar
   waybar
@@ -88,6 +89,6 @@ fi
 # Stow all packages
 echo "Stowing dotfiles..."
 cd "$(dirname "$(readlink -f "$0")")/../../../"
-stow emacs foot gnupg gtk niri scripts waybar
+stow emacs foot gnupg gtk kitty niri scripts waybar
 
 echo "Done."

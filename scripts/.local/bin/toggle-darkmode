@@ -8,6 +8,11 @@ if [[ "$CURRENT" == "'prefer-dark'" ]]; then
   ln -sf flatwhite.css ~/.config/waybar/style.css
   killall -SIGUSR2 waybar
   killall -SIGUSR2 foot 2>/dev/null
+  # Kitty
+  ln -sf flatwhite.conf ~/.config/kitty/current-theme.conf
+  for sock in "$XDG_RUNTIME_DIR"/kitty-*; do
+    kitty @ --to unix:"$sock" set-colors --all --configured ~/.config/kitty/flatwhite.conf 2>/dev/null
+  done
   # Niri
   sed -i --follow-symlinks \
     -e 's|background-color "#[0-9a-fA-F]*"|background-color "#f7f3ee"|g' \
@@ -25,6 +30,11 @@ else
   ln -sf gruvbox.css ~/.config/waybar/style.css
   killall -SIGUSR2 waybar
   killall -SIGUSR1 foot 2>/dev/null
+  # Kitty
+  ln -sf gruvbox.conf ~/.config/kitty/current-theme.conf
+  for sock in "$XDG_RUNTIME_DIR"/kitty-*; do
+    kitty @ --to unix:"$sock" set-colors --all --configured ~/.config/kitty/gruvbox.conf 2>/dev/null
+  done
   # Niri
   sed -i --follow-symlinks \
     -e 's|background-color "#[0-9a-fA-F]*"|background-color "#282828"|g' \
