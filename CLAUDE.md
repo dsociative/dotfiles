@@ -65,3 +65,13 @@ When adding new external tools or dependencies to any config, update `scripts/.l
 ## Credentials
 
 API keys (Anthropic, DeepSeek, Google) are stored in `~/.authinfo` and read via `auth-source` in `emacs/.emacs.d/config/ai.el`.
+
+## Private Config
+
+Machine-specific and sensitive configs live in `~/.config/dotfiles-private/` (not tracked in git). Scripts and Emacs configs load files from there when present.
+
+Files:
+- `mattermost.conf` — shell variables sourced by `mattermost_theme_switch`. Format: `MM_URL="https://host"`, `MM_HOST="%host%"` (percent-wrapped for cookie matching)
+- `forge.el` — Emacs Lisp, loaded by Emacs at startup. Corporate GitLab/GitHub hosts for forge, org-mode settings, or anything environment-specific
+
+Format convention: shell configs use `KEY=value`, Emacs configs use `.el` files with standard Lisp.

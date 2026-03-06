@@ -50,6 +50,8 @@ PACMAN_PACKAGES=(
   texlive-latexextra
 
   # CLI tools used by emacs & scripts
+  bat
+  git-delta
   ripgrep
   stow
   jq

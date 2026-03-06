@@ -69,7 +69,29 @@
 
 ;; Git
 (use-package magit
-  :ensure t)
+  :ensure t
+  :config
+  (setq magit-diff-refine-hunk 'all))
+
+(use-package magit-delta
+  :ensure t
+  :hook (magit-mode . magit-delta-mode)
+  :config
+  (defun my/magit-delta-args ()
+    "Build delta args with diff colors matching current Emacs theme."
+    (let ((added-bg (face-background 'magit-diff-added-highlight nil t))
+          (removed-bg (face-background 'magit-diff-removed-highlight nil t))
+          (added-emph (face-background 'diff-refine-added nil t))
+          (removed-emph (face-background 'diff-refine-removed nil t)))
+      (list "--no-gitconfig"
+            "--true-color" "always"
+            "--minus-style" (format "syntax %s" (or removed-bg "auto"))
+            "--plus-style" (format "syntax %s" (or added-bg "auto"))
+            "--minus-emph-style" (format "syntax bold %s" (or removed-emph removed-bg "auto"))
+            "--plus-emph-style" (format "syntax bold %s" (or added-emph added-bg "auto")))))
+  (setq magit-delta-default-dark-theme "doom-gruvbox"
+        magit-delta-default-light-theme "doom-flatwhite"
+        magit-delta-delta-args (my/magit-delta-args)))
 
 (use-package evil
   :ensure t
@@ -190,14 +212,24 @@
 (use-package doom-themes
   :config
   (setq doom-themes-treemacs-theme "doom-colors")
+  (setq doom-themes-treemacs-enable-variable-pitch nil)
   (setq doom-themes-enable-bold t
 	      doom-themes-enable-italic t)
   (doom-themes-treemacs-config)
-  (let ((font "CaskaydiaCove Nerd Font 16"))
-    (set-face-attribute 'treemacs-directory-face nil :family font)
-    (set-face-attribute 'treemacs-file-face nil :family font)
-    (set-face-attribute 'treemacs-root-face nil :family font :height 1.1))
   (load-theme 'doom-gruvbox))
+
+(defun my/set-theme (theme)
+  "Switch to THEME."
+  (mapc #'disable-theme custom-enabled-themes)
+  (load-theme theme t)
+  (when (fboundp 'my/magit-delta-args)
+    (setq magit-delta-delta-args (my/magit-delta-args))))
+
+(defun my/toggle-theme ()
+  "Toggle between doom-gruvbox and doom-flatwhite."
+  (interactive)
+  (my/set-theme (if (memq 'doom-gruvbox custom-enabled-themes)
+                    'doom-flatwhite 'doom-gruvbox)))
 
 (global-set-key [f8] 'treemacs)
 

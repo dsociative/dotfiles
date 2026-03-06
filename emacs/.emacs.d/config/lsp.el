@@ -61,4 +61,36 @@
 
 (use-package feature-mode
   :ensure t
-  :mode "\\.feature\\'")
+  :mode "\\.feature\\'"
+  :custom-face
+  (feature-feature-keyword-face ((t (:inherit font-lock-constant-face :bold t))))
+  (feature-scenario-keyword-face ((t (:inherit font-lock-function-name-face :bold t))))
+  (feature-rule-keyword-face ((t (:inherit font-lock-type-face :bold t))))
+  (feature-background-keyword-face ((t (:inherit font-lock-type-face))))
+  (feature-given-keyword-face ((t (:inherit font-lock-variable-name-face))))
+  (feature-when-keyword-face ((t (:inherit font-lock-string-face))))
+  (feature-then-keyword-face ((t (:inherit font-lock-warning-face))))
+  (feature-and-keyword-face ((t (:inherit font-lock-builtin-face))))
+  (feature-but-keyword-face ((t (:inherit font-lock-comment-face))))
+  (feature-examples-keyword-face ((t (:inherit font-lock-doc-face :bold t))))
+  :config
+  (font-lock-add-keywords
+   'feature-mode
+   '(("'[^']*'" . font-lock-string-face)
+     ("\"[^\"]*\"" . font-lock-string-face)
+     ("{{.*?}}" . font-lock-variable-name-face)
+     ("\\$\\.[[:alnum:]_]+\\(\\[[0-9]+\\]\\)?\\(\\.[[:alnum:]_]+\\(\\[[0-9]+\\]\\)?\\)*" . font-lock-type-face)
+     ("\\.[[:alnum:]_]+\\(\\[[0-9]+\\]\\)?\\(\\.[[:alnum:]_]+\\(\\[[0-9]+\\]\\)?\\)*" . font-lock-type-face)
+     ("\\b[0-9]+\\b" . font-lock-constant-face)
+     ("\\[\\([0-9]+\\)\\]" 1 font-lock-constant-face t)
+     ("\\b\\(GET\\|POST\\|PUT\\|DELETE\\|PATCH\\)\\b" . font-lock-builtin-face)
+     ("|" . font-lock-comment-delimiter-face))
+   'append))
+
+(use-package forge
+  :ensure t
+  :after magit
+  :config
+  (let ((private-forge "~/.config/dotfiles-private/forge.el"))
+    (when (file-exists-p private-forge)
+      (load private-forge))))

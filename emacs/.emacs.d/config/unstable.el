@@ -116,7 +116,12 @@
     "w" 'org-roam-node-find
     "e" 'org-roam-capture
     "m" 'eglot-find-implementation
-    "a" 'eglot-code-actions))
+    "a" 'eglot-code-actions
+    "d" '(:ignore t :which-key "diagnostics")
+    "d d" 'consult-flymake
+    "d p" (lambda () (interactive) (consult-flymake t))
+    "d n" 'flymake-goto-next-error
+    "d N" 'flymake-goto-prev-error))
 
 (define-key evil-motion-state-map (kbd "`") 'consult-buffer)
 (setq treesit-language-source-alist

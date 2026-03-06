@@ -41,7 +41,8 @@
     '((context-nodes
        '("identifier" "type_identifier" "field_identifier"
          "integer_literal" "float_literal" "string_literal"
-         "char_literal" "boolean_literal" "self" "primitive_type"))
+         "char_literal" "boolean_literal" "self" "primitive_type"
+         ":" "," ";"))
       (indent-after-edit nil)
       (envelope-indent-region-function #'indent-region)
       (pretty-print-node-name-function #'combobulate-rust-pretty-print-node-name)
@@ -55,16 +56,7 @@
       (procedures-logical
        '((:activation-nodes ((:nodes (all))))))
       (procedures-sibling
-       `(;; Top-level items and statements (source_file, block, declaration_list)
-         (:activation-nodes
-          ((:nodes ((rule "_declaration_statement") "expression_statement")
-                   :has-parent ("source_file" "block" "declaration_list")))
-          :selector (:choose parent :match-children t))
-         ;; Match arms
-         (:activation-nodes
-          ((:nodes ("match_arm") :has-parent ("match_block")))
-          :selector (:choose parent :match-children (:match-rules ("match_arm"))))
-         ;; Function parameters
+       `(;; Function parameters (must be before top-level to win procedure matching)
          (:activation-nodes
           ((:nodes ("parameter" "self_parameter")
                    :has-parent ("parameters")))
@@ -88,6 +80,22 @@
           ((:nodes ("field_initializer" "shorthand_field_initializer")
                    :has-parent ("field_initializer_list")))
           :selector (:choose parent :match-children t))
+         ;; Function parts: parameters <-> block as siblings
+         (:activation-nodes
+          ((:nodes ("parameters" "block")
+                   :has-parent ("function_item")))
+          :selector (:choose parent :match-children
+                             (:match-rules ("parameters" "block"))))
+         ;; Match arms
+         (:activation-nodes
+          ((:nodes ("match_arm") :has-parent ("match_block")))
+          :selector (:choose parent :match-children (:match-rules ("match_arm"))))
+         ;; Top-level items and statements (source_file, block, declaration_list)
+         (:activation-nodes
+          ((:nodes ((rule "_declaration_statement") "expression_statement"
+                    "line_comment" "block_comment")
+                   :has-parent ("source_file" "block" "declaration_list")))
+          :selector (:choose parent :match-children t))
 ))
       (procedures-hierarchy
        `((:activation-nodes
@@ -103,7 +111,7 @@
                     "mod_item" "closure_expression")
                    :position at))
           :selector (:choose node :match-children
-                             (:match-rules ("block" "match_block"
+                             (:match-rules ("parameters" "block" "match_block"
                                             "field_declaration_list"
                                             "declaration_list"
                                             "enum_variant_list"))))

@@ -1,0 +1,139 @@
+#!/bin/bash
+# Convert current Emacs theme to bat/delta .tmTheme format
+# Usage: emacs-theme-to-bat [output-name]
+#   output-name defaults to current Emacs theme name
+#
+# For themes that use background colors for syntax distinction (like flatwhite),
+# backgrounds are converted to darkened/saturated foreground colors automatically.
+
+set -euo pipefail
+
+THEMES_DIR="$HOME/.config/bat/themes"
+mkdir -p "$THEMES_DIR"
+
+# Extract all face data from Emacs in one call
+eval "$(emacsclient -e '
+(let ((faces (quote (default region hl-line
+              font-lock-comment-face font-lock-string-face
+              font-lock-keyword-face font-lock-function-name-face
+              font-lock-variable-name-face font-lock-type-face
+              font-lock-constant-face font-lock-builtin-face
+              font-lock-preprocessor-face font-lock-doc-face
+              font-lock-warning-face)))
+      (bg-to-fg (lambda (hex)
+        "Convert pastel bg to readable fg via HSL."
+        (let* ((hsl (apply #'\''color-rgb-to-hsl (color-name-to-rgb hex)))
+               (h (nth 0 hsl))
+               (s (min 0.5 (* (nth 1 hsl) 1.8)))
+               (l 0.38))
+          (apply #'\''format "#%02x%02x%02x"
+                 (mapcar (lambda (x) (round (* x 255)))
+                         (color-hsl-to-rgb h s l)))))))
+  (mapconcat
+   (lambda (face)
+     (let* ((fg (face-attribute face :foreground nil t))
+            (bg (face-attribute face :background nil t))
+            (fname (replace-regexp-in-string "-" "_" (symbol-name face))))
+       (format "FACE_%s_FG=%s\nFACE_%s_BG=%s\nFACE_%s_BGFG=%s"
+               fname (if (and fg (not (eq fg (quote unspecified)))) fg "")
+               fname (if (and bg (not (eq bg (quote unspecified)))) bg "")
+               fname (if (and bg (not (eq bg (quote unspecified)))
+                              (not (equal bg (face-attribute (quote default) :background nil t))))
+                         (funcall bg-to-fg bg) ""))))
+   faces "\n"))' 2>/dev/null | tr -d '"')"
+
+# Get theme name
+theme_name=$(emacsclient -e '(car custom-enabled-themes)' 2>/dev/null | tr -d '"')
+output_name="${1:-$theme_name}"
+
+if [ -z "$output_name" ] || [ "$output_name" = "nil" ]; then
+  echo "Error: no theme name. Pass as argument or load a theme in Emacs." >&2
+  exit 1
+fi
+
+bg="$FACE_default_BG"; fg="$FACE_default_FG"
+sel="${FACE_region_BG:-$bg}"; linehl="${FACE_hl_line_BG:-$bg}"
+
+# For each face: use bg-derived foreground if available, else original fg, else default fg
+resolve() {
+  local face_fg="$1" face_bgfg="$2"
+  if [ -n "$face_bgfg" ]; then
+    echo "$face_bgfg"
+  elif [ -n "$face_fg" ]; then
+    echo "$face_fg"
+  else
+    echo "$fg"
+  fi
+}
+
+comment=$(resolve "$FACE_font_lock_comment_face_FG" "")
+doc=$(resolve "$FACE_font_lock_doc_face_FG" "")
+string=$(resolve "$FACE_font_lock_string_face_FG" "$FACE_font_lock_string_face_BGFG")
+keyword=$(resolve "$FACE_font_lock_keyword_face_FG" "$FACE_font_lock_keyword_face_BGFG")
+function=$(resolve "$FACE_font_lock_function_name_face_FG" "$FACE_font_lock_function_name_face_BGFG")
+variable=$(resolve "$FACE_font_lock_variable_name_face_FG" "$FACE_font_lock_variable_name_face_BGFG")
+type=$(resolve "$FACE_font_lock_type_face_FG" "$FACE_font_lock_type_face_BGFG")
+constant=$(resolve "$FACE_font_lock_constant_face_FG" "$FACE_font_lock_constant_face_BGFG")
+builtin=$(resolve "$FACE_font_lock_builtin_face_FG" "$FACE_font_lock_builtin_face_BGFG")
+preprocessor=$(resolve "$FACE_font_lock_preprocessor_face_FG" "$FACE_font_lock_preprocessor_face_BGFG")
+warning=$(resolve "$FACE_font_lock_warning_face_FG" "$FACE_font_lock_warning_face_BGFG")
+
+: "${doc:=$comment}"
+
+# Generate scope entry
+scope() {
+  local name="$1" sc="$2" color="$3" style="${4:-}"
+  echo "		<dict>"
+  echo "			<key>name</key><string>$name</string>"
+  echo "			<key>scope</key><string>$sc</string>"
+  echo "			<key>settings</key>"
+  echo "			<dict>"
+  echo "				<key>foreground</key><string>$color</string>"
+  [ -n "$style" ] && echo "				<key>fontStyle</key><string>$style</string>"
+  echo "			</dict>"
+  echo "		</dict>"
+}
+
+cat > "$THEMES_DIR/$output_name.tmTheme" << EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>name</key>
+	<string>$output_name</string>
+	<key>settings</key>
+	<array>
+		<dict>
+			<key>settings</key>
+			<dict>
+				<key>background</key><string>$bg</string>
+				<key>foreground</key><string>$fg</string>
+				<key>caret</key><string>$fg</string>
+				<key>selection</key><string>$sel</string>
+				<key>lineHighlight</key><string>$linehl</string>
+			</dict>
+		</dict>
+$(scope "Comment" "comment, punctuation.definition.comment" "$comment" "italic")
+$(scope "Documentation" "comment.block.documentation" "$doc" "italic")
+$(scope "String" "string, string.quoted" "$string")
+$(scope "Number" "constant.numeric" "$constant")
+$(scope "Constant" "constant, constant.language, constant.character" "$constant")
+$(scope "Keyword" "keyword, keyword.control, keyword.operator.new" "$keyword")
+$(scope "Storage" "storage, storage.type, storage.modifier" "$keyword")
+$(scope "Type" "entity.name.type, entity.other.inherited-class, support.type" "$type")
+$(scope "Function" "entity.name.function, support.function, meta.function-call" "$function")
+$(scope "Class" "entity.name.class, entity.name.struct, entity.name.enum" "$type" "bold")
+$(scope "Variable" "variable, variable.other, variable.parameter" "$variable")
+$(scope "Tag" "entity.name.tag" "$function")
+$(scope "Attribute" "entity.other.attribute-name" "$type")
+$(scope "Preprocessor" "meta.preprocessor, entity.name.macro" "$preprocessor")
+$(scope "Builtin" "support.function, support.constant" "$builtin")
+$(scope "Warning" "invalid, invalid.illegal" "$warning")
+$(scope "Punctuation" "punctuation" "$fg")
+	</array>
+</dict>
+</plist>
+EOF
+
+echo "Generated $THEMES_DIR/$output_name.tmTheme"
+echo "Run 'bat cache --build' to activate"

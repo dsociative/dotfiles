@@ -4,7 +4,7 @@ CURRENT=$(dconf read /org/gnome/desktop/interface/color-scheme)
 if [[ "$CURRENT" == "'prefer-dark'" ]]; then
   # Switch to light
   dconf write /org/gnome/desktop/interface/color-scheme "'default'"
-  emacsclient -e '(progn (mapc #'\''disable-theme custom-enabled-themes) (load-theme '\''doom-flatwhite t))' 2>/dev/null
+  emacsclient -e "(my/set-theme 'doom-flatwhite)" 2>/dev/null
   ln -sf flatwhite.css ~/.config/waybar/style.css
   killall -SIGUSR2 waybar
   killall -SIGUSR2 foot 2>/dev/null
@@ -26,7 +26,7 @@ if [[ "$CURRENT" == "'prefer-dark'" ]]; then
 else
   # Switch to dark
   dconf write /org/gnome/desktop/interface/color-scheme "'prefer-dark'"
-  emacsclient -e '(progn (mapc #'\''disable-theme custom-enabled-themes) (load-theme '\''doom-gruvbox t))' 2>/dev/null
+  emacsclient -e "(my/set-theme 'doom-gruvbox)" 2>/dev/null
   ln -sf gruvbox.css ~/.config/waybar/style.css
   killall -SIGUSR2 waybar
   killall -SIGUSR1 foot 2>/dev/null
