@@ -67,7 +67,7 @@
         "window-rewrite-default": "",
         "window-rewrite": {
             "class<firefox>": "",
-            "class<foot>": "",
+            "class<kitty>": "",
             "class<emacs>": "",
             "class<chromium>": "",
             "class<telegram>": "",
