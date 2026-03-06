@@ -54,7 +54,7 @@
 ;; a buffer-local variable when set.
 (setq-default indent-tabs-mode nil)
 
-(defalias 'yes-or-no-p 'y-or-n-p) ; Accept 'y' in lieu of 'yes'.
+(setopt use-short-answers t)
 
 (when (fboundp 'windmove-default-keybindings)
   (windmove-default-keybindings))
@@ -76,7 +76,7 @@
   :init
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
-  (setq evil-undo-system 'undo-fu)
+  (setq evil-undo-system 'undo-redo)
   :config
   (evil-mode 1)
   (unless (display-graphic-p)
@@ -88,8 +88,6 @@
   :ensure t
   :config
   (evil-collection-init))
-
-(use-package undo-fu)
 
 ;; Start
 
@@ -148,8 +146,6 @@
 (use-package expand-region
   :bind ("C-=" . er/expand-region))
 
-(use-package vterm)
-
 (setq mouse-wheel-scroll-amount '(3 ((shift) . 3))) ;; one line at a time
 (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
 (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
@@ -168,10 +164,6 @@
          )
   )
 
-(use-package highlight-indentation
-  :ensure t
-  )
-
 (use-package indent-tools :ensure t)
 (global-set-key (kbd "C-c >") 'indent-tools-hydra/body)
 
@@ -182,9 +174,7 @@
 (use-package treemacs
   :ensure t
   :config
-  (setq treemacs-position 'right)
-  (set-face-font 'treemacs-root-face "CaskaydiaCove Nerd Font 18")
-  )
+  (setq treemacs-position 'right))
 
 (use-package treemacs-magit
   :after (treemacs magit)
@@ -203,8 +193,11 @@
   (setq doom-themes-enable-bold t
 	      doom-themes-enable-italic t)
   (doom-themes-treemacs-config)
-  (load-theme 'doom-gruvbox)
-  )
+  (let ((font "CaskaydiaCove Nerd Font 16"))
+    (set-face-attribute 'treemacs-directory-face nil :family font)
+    (set-face-attribute 'treemacs-file-face nil :family font)
+    (set-face-attribute 'treemacs-root-face nil :family font :height 1.1))
+  (load-theme 'doom-gruvbox))
 
 (global-set-key [f8] 'treemacs)
 
@@ -327,7 +320,7 @@
   :ensure t
   :custom
   (corfu-auto t)
-  (corfu-auto-delay 0)
+  (corfu-auto-delay 0.2)
   (corfu-auto-prefix 1)
   :init
   (global-corfu-mode)

@@ -1,8 +1,6 @@
 ;;; ai.el --- AI integration configuration -*- lexical-binding: t; -*-
 (provide 'ai)
 
-(use-package ellama)
-
 (use-package gptel
   :init (require 'gptel-integrations)
   :ensure t)
@@ -72,10 +70,10 @@
                   (vterm--redraw vterm--term))))))
 
 (use-package cond-let
-  :straight (:host github :repo "tarsius/cond-let"))
+  :vc (:url "https://github.com/tarsius/cond-let"))
 
 (use-package claude-code-ide
-  :straight (:host github :repo "manzaltu/claude-code-ide.el")
+  :vc (:url "https://github.com/manzaltu/claude-code-ide.el")
   :custom
   (claude-code-ide-cli-path (expand-file-name "~/.local/bin/claude"))
   :bind ("C-c C-a" . claude-code-ide))

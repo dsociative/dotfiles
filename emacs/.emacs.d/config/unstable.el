@@ -47,22 +47,6 @@
 
 (advice-add 'select-safe-coding-system :around #'my-bypass-temp-file-coding-check)
 
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name
-        "straight/repos/straight.el/bootstrap.el"
-        (or (bound-and-true-p straight-base-dir)
-            user-emacs-directory)))
-      (bootstrap-version 7))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
-
 (setq auth-sources
       '((:source "~/.authinfo"))
       )
@@ -110,25 +94,31 @@
 
 (pixel-scroll-precision-mode 1)
 
-(define-key evil-motion-state-map (kbd "SPC") nil)
+(use-package general
+  :ensure t
+  :config
+  (general-create-definer my/leader
+    :states '(normal motion)
+    :keymaps 'override
+    :prefix "SPC")
+  (my/leader
+    "p" 'consult-project-extra-find
+    "v" 'magit-status
+    "b" 'consult-buffer
+    "h" 'evil-window-left
+    "j" 'evil-window-down
+    "k" 'evil-window-up
+    "l" 'evil-window-right
+    "o" 'consult-eglot-symbols
+    "r" 'xref-find-references
+    "n" 'eglot-rename
+    "t" 'org-roam-dailies-goto-today
+    "w" 'org-roam-node-find
+    "e" 'org-roam-capture
+    "m" 'eglot-find-implementation
+    "a" 'eglot-code-actions))
+
 (define-key evil-motion-state-map (kbd "`") 'consult-buffer)
-(define-key evil-motion-state-map (kbd "SPC p") 'consult-project-extra-find)
-(define-key evil-motion-state-map (kbd "SPC v") 'magit-status)
-(define-key evil-motion-state-map (kbd "SPC b") 'consult-buffer)
-(define-key evil-motion-state-map (kbd "SPC h") 'evil-window-left)
-(define-key evil-motion-state-map (kbd "SPC j") 'evil-window-down)
-(define-key evil-motion-state-map (kbd "SPC k") 'evil-window-up)
-(define-key evil-motion-state-map (kbd "SPC o") 'consult-eglot-symbols)
-(define-key evil-motion-state-map (kbd "SPC r") 'xref-find-references)
-(define-key evil-motion-state-map (kbd "SPC n") 'eglot-rename)
-(define-key evil-motion-state-map (kbd "SPC t") 'org-roam-dailies-goto-today)
-(define-key evil-motion-state-map (kbd "SPC w") 'org-roam-node-find)
-(define-key evil-motion-state-map (kbd "SPC e") 'org-roam-capture)
-(define-key evil-motion-state-map (kbd "SPC m") 'eglot-find-implementation)
-(define-key evil-motion-state-map (kbd "SPC a") 'eglot-code-actions)
-
-
-(define-key evil-motion-state-map (kbd "SPC l") 'evil-window-right)
 (setq treesit-language-source-alist
    '((bash "https://github.com/tree-sitter/tree-sitter-bash")
      (cmake "https://github.com/uyha/tree-sitter-cmake")
@@ -159,7 +149,7 @@
 (setq treesit-font-lock-level 4)
 
 (use-package tla-ts-mode
-  :straight (:host github :repo "dsociative/tla-ts-mode")
+  :vc (:url "https://github.com/dsociative/tla-ts-mode")
   :mode "\\.tla\\'"
   :init
   (add-to-list 'org-src-lang-modes '("tlaplus" . tla-ts)))
@@ -168,40 +158,29 @@
   :ensure nil
   :init
   (setq smerge-command-prefix "C-c m")
-
   :config
-  ;; https://github.com/alphapapa/unpackaged.el#smerge-mode
-  (defhydra hydra/smerge
-    (:color pink :hint nil :post (smerge-auto-leave))
-    "
-^Move^       ^Keep^               ^Diff^                 ^Other^
-^^-----------^^-------------------^^---------------------^^-------
-_n_ext       _b_ase               _<_: upper/base        _C_ombine
-_p_rev       _u_pper              _=_: upper/lower       _r_esolve
-^^           _l_ower              _>_: base/lower        _k_ill current
-^^           _a_ll                _R_efine
-^^           _RET_: current       _E_diff
-"
-    ("n" smerge-next)
-    ("p" smerge-prev)
-    ("b" smerge-keep-base)
-    ("u" smerge-keep-upper)
-    ("l" smerge-keep-lower)
-    ("a" smerge-keep-all)
-    ("RET" smerge-keep-current)
-    ("\C-m" smerge-keep-current)
-    ("<" smerge-diff-base-upper)
-    ("=" smerge-diff-upper-lower)
-    (">" smerge-diff-base-lower)
-    ("R" smerge-refine)
-    ("E" smerge-ediff)
-    ("C" smerge-combine-with-next)
-    ("r" smerge-resolve)
-    ("k" smerge-kill-current)
-    ("q" nil "cancel" :color blue))
-
-  :bind (("C-c c" . hydra/smerge/body))
-  )
+  (transient-define-prefix my/smerge ()
+    "Smerge commands."
+    [["Move"
+      ("n" "next" smerge-next :transient t)
+      ("p" "prev" smerge-prev :transient t)]
+     ["Keep"
+      ("b" "base" smerge-keep-base)
+      ("u" "upper" smerge-keep-upper)
+      ("l" "lower" smerge-keep-lower)
+      ("a" "all" smerge-keep-all)
+      ("RET" "current" smerge-keep-current)]
+     ["Diff"
+      ("<" "upper/base" smerge-diff-base-upper :transient t)
+      ("=" "upper/lower" smerge-diff-upper-lower :transient t)
+      (">" "base/lower" smerge-diff-base-lower :transient t)
+      ("R" "refine" smerge-refine :transient t)
+      ("E" "ediff" smerge-ediff)]
+     ["Other"
+      ("C" "combine" smerge-combine-with-next)
+      ("r" "resolve" smerge-resolve)
+      ("k" "kill current" smerge-kill-current)]])
+  :bind (("C-c c" . my/smerge)))
 
 
 (use-package envrc
@@ -220,12 +199,6 @@ _p_rev       _u_pper              _=_: upper/lower       _r_esolve
   ;; (load-theme 'miasma t)
   )
 
-
-(use-package elysium
-  :custom
-  ;; Below are the default values
-  (elysium-window-size 0.33) ; The elysium buffer will be 1/3 your screen
-  (elysium-window-style 'vertical)) ; Can be customized to horizontal
 
 (use-package ox-hugo :after ox)
 
@@ -321,43 +294,35 @@ This is an around advice for `org-html--svg-image' as FUN."
   (setq wgrep-auto-save-buffer t))
 
 (use-package combobulate
-  :straight (:host github :repo "mickeynp/combobulate")
+  :vc (:url "https://github.com/mickeynp/combobulate")
+  :hook ((go-ts-mode python-ts-mode typescript-ts-mode tsx-ts-mode js-ts-mode yaml-ts-mode json-ts-mode css-ts-mode html-ts-mode toml-ts-mode) . (lambda () (combobulate-mode 1)))
   :init
-  ;; Убедись что evil загружен до combobulate
   (setq combobulate-key-prefix "C-c o")
 
   :config
-  (require 'combobulate-rust nil t)
-  ;; === Навигация в Normal mode (vim-style) ===
-  (evil-define-key 'normal combobulate-mode-map
-    ;; Навигация по siblings (как ] и [)
-    "] f" 'combobulate-navigate-next           ;; следующая функция
-    "[ f" 'combobulate-navigate-previous       ;; предыдущая функция
-
-    ;; Навигация по дереву
-    "g K" 'combobulate-navigate-up             ;; к родителю (как C-M-u)
-    "g J" 'combobulate-navigate-down           ;; к ребенку (как C-M-d)
-
-    ;; Начало/конец defun (как [[ и ]])
-    "] d" 'combobulate-navigate-end-of-defun
-    "[ d" 'combobulate-navigate-beginning-of-defun
-
-    ;; Expand region
-    "g v" 'combobulate-mark-node-dwim
-
-    ;; Главное меню
-    ", m" 'combobulate                         ;; или SPC m если используешь space
-
-    ;; Быстрые действия
-    "g c" 'combobulate-clone-node-dwim
-    "g d" 'combobulate-kill-node-dwim
-    "g x" 'combobulate-splice-node-dwim        ;; splice (удалить обертку)
-    "g r" 'combobulate-drag-down               ;; переместить вниз
-    "g R" 'combobulate-drag-up)                ;; переместить вверх
-
-  ;; === Visual mode ===
-  (evil-define-key 'visual combobulate-mode-map
-    "g h" 'combobulate-mark-node-dwim))        ;; расширить выделение
+  (transient-define-prefix my/combobulate ()
+    "Combobulate structural editing."
+    [["Navigate"
+      ("n" "next sibling" combobulate-navigate-next :transient t)
+      ("p" "prev sibling" combobulate-navigate-previous :transient t)
+      ("k" "up (parent)" combobulate-navigate-up :transient t)
+      ("j" "down (child)" combobulate-navigate-down :transient t)
+      ("a" "begin defun" combobulate-navigate-beginning-of-defun :transient t)
+      ("e" "end defun" combobulate-navigate-end-of-defun :transient t)]
+     ["Edit"
+      ("d" "kill node" combobulate-kill-node-dwim :transient t)
+      ("c" "clone" combobulate-clone-node-dwim)
+      ("t" "transpose" combobulate-transpose-sexps)
+      ("s" "drag down" combobulate-drag-down :transient t)
+      ("S" "drag up" combobulate-drag-up :transient t)
+      ("x" "splice" combobulate-splice-self :transient t)]
+     ["Mark & Other"
+      ("v" "mark node" combobulate-mark-node-dwim :transient t)
+      ("V" "mark defun" combobulate-mark-defun :transient t)
+      ("w" "envelop …" combobulate-envelop)
+      ("h" "highlight …" combobulate-highlight)
+      ("B" "query …" combobulate-query)]])
+  (my/leader "c" 'my/combobulate))
 
 (use-package reverse-im
   :ensure t

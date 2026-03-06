@@ -58,3 +58,7 @@
 (use-package consult-eglot
   :ensure
   :after (eglot consult))
+
+(use-package feature-mode
+  :ensure t
+  :mode "\\.feature\\'")
