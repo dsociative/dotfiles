@@ -442,4 +442,7 @@
 (when (display-graphic-p)
   (define-key key-translation-map (kbd "ESC") (kbd "C-g")))
 
+(with-eval-after-load 'transient
+  (keymap-set transient-map "<escape>" 'transient-quit-one))
+
 (setq-default evil-shift-width tab-width)

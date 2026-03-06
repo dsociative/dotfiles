@@ -295,11 +295,12 @@ This is an around advice for `org-html--svg-image' as FUN."
 
 (use-package combobulate
   :vc (:url "https://github.com/mickeynp/combobulate")
-  :hook ((go-ts-mode python-ts-mode typescript-ts-mode tsx-ts-mode js-ts-mode yaml-ts-mode json-ts-mode css-ts-mode html-ts-mode toml-ts-mode) . (lambda () (combobulate-mode 1)))
+  :hook ((rust-ts-mode go-ts-mode python-ts-mode typescript-ts-mode tsx-ts-mode js-ts-mode yaml-ts-mode json-ts-mode css-ts-mode html-ts-mode toml-ts-mode) . (lambda () (combobulate-mode 1)))
   :init
   (setq combobulate-key-prefix "C-c o")
 
   :config
+  (require 'combobulate-rust)
   (transient-define-prefix my/combobulate ()
     "Combobulate structural editing."
     [["Navigate"
