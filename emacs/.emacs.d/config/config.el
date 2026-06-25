@@ -73,6 +73,12 @@
   :config
   (setq magit-diff-refine-hunk 'all))
 
+(defun my/package-upgrade-all ()
+  "Upgrade all packages and recompile to fix cond-let macro expansion order."
+  (interactive)
+  (package-upgrade-all)
+  (package-recompile-all))
+
 (use-package magit-delta
   :ensure t
   :hook (magit-mode . magit-delta-mode)
@@ -102,7 +108,7 @@
   :config
   (evil-mode 1)
   (unless (display-graphic-p)
-    (setq evil-esc-delay 0.3)))
+    (setq evil-esc-delay 0.1)))
 
 (use-package evil-collection
   :after evil

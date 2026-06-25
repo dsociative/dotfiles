@@ -41,9 +41,12 @@
   :ensure t)
 
 (setq gofmt-command "goimports")
-(add-hook 'go-mode-hook
-          (lambda ()
-            (add-hook 'before-save-hook 'gofmt-before-save nil t)))
+(defun my/go-setup ()
+  (add-hook 'before-save-hook 'gofmt-before-save nil t)
+  (setq-local indent-tabs-mode t)
+  (setq-local go-ts-mode-indent-offset tab-width))
+(add-hook 'go-mode-hook #'my/go-setup)
+(add-hook 'go-ts-mode-hook #'my/go-setup)
 
 (add-hook 'go-mode-hook
           (lambda ()
@@ -74,10 +77,21 @@
   (feature-but-keyword-face ((t (:inherit font-lock-comment-face))))
   (feature-examples-keyword-face ((t (:inherit font-lock-doc-face :bold t))))
   :config
+  (defun my/feature-syntax-propertize (start end)
+    "Mark triple-quoted docstrings as strings in feature-mode."
+    (goto-char start)
+    (while (re-search-forward "\"\"\"" end t)
+      (let ((ppss (save-excursion (syntax-ppss (match-beginning 0)))))
+        (if (nth 3 ppss)
+            ;; Inside a string — this is the closing """
+            (put-text-property (1- (point)) (point)
+                               'syntax-table (string-to-syntax "|"))
+          ;; Not inside a string — this is the opening """
+          (put-text-property (match-beginning 0) (1+ (match-beginning 0))
+                             'syntax-table (string-to-syntax "|"))))))
   (font-lock-add-keywords
    'feature-mode
-   '(("'[^']*'" . font-lock-string-face)
-     ("\"[^\"]*\"" . font-lock-string-face)
+   '(("'[^'\n]*'" . font-lock-string-face)
      ("{{.*?}}" . font-lock-variable-name-face)
      ("\\$\\.[[:alnum:]_]+\\(\\[[0-9]+\\]\\)?\\(\\.[[:alnum:]_]+\\(\\[[0-9]+\\]\\)?\\)*" . font-lock-type-face)
      ("\\.[[:alnum:]_]+\\(\\[[0-9]+\\]\\)?\\(\\.[[:alnum:]_]+\\(\\[[0-9]+\\]\\)?\\)*" . font-lock-type-face)
@@ -85,7 +99,10 @@
      ("\\[\\([0-9]+\\)\\]" 1 font-lock-constant-face t)
      ("\\b\\(GET\\|POST\\|PUT\\|DELETE\\|PATCH\\)\\b" . font-lock-builtin-face)
      ("|" . font-lock-comment-delimiter-face))
-   'append))
+   'append)
+  (add-hook 'feature-mode-hook
+            (lambda ()
+              (setq-local syntax-propertize-function #'my/feature-syntax-propertize))))
 
 (use-package forge
   :ensure t

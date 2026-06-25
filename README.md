@@ -20,4 +20,4 @@ cd ~/dotfiles
 
 ## Theme toggle
 
-`Mod+N` switches between dark (gruvbox) and light (flatwhite) across all apps: niri, foot, emacs, waybar, GTK, mattermost.
+`Mod+N` switches between dark (gruvbox) and light (flatwhite) across all apps: niri, foot, kitty, emacs, waybar, hyprland, GTK.

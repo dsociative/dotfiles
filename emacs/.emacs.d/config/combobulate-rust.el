@@ -83,7 +83,8 @@
          ;; Function parts: parameters <-> block as siblings
          (:activation-nodes
           ((:nodes ("parameters" "block")
-                   :has-parent ("function_item")))
+                   :has-parent ("function_item")
+                   :position at))
           :selector (:choose parent :match-children
                              (:match-rules ("parameters" "block"))))
          ;; Match arms

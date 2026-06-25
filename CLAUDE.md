@@ -37,9 +37,8 @@ Top bar with modules: workspaces, window title, language indicator (pulsing red 
 
 ## Scripts
 
-- **toggle-darkmode** - Toggles system-wide dark/light theme: dconf, foot, emacs, waybar, niri, GTK theme, mattermost
+- **toggle-darkmode** - Toggles system-wide dark/light theme: dconf, foot, kitty, emacs, waybar, niri, hyprland, GTK theme
 - **foot-launch** - Launches foot with correct color theme based on current dconf setting
-- **mattermost_theme_switch** - Switches Mattermost sidebar theme to match dark/light mode, reads auth tokens from Firefox cookies. Endpoint config in `~/.config/dotfiles-private/mattermost.conf`
 - **install-deps** - Installs all Arch Linux packages required by these configs (pacman + AUR)
 
 ## Key Conventions
@@ -71,7 +70,6 @@ API keys (Anthropic, DeepSeek, Google) are stored in `~/.authinfo` and read via 
 Machine-specific and sensitive configs live in `~/.config/dotfiles-private/` (not tracked in git). Scripts and Emacs configs load files from there when present.
 
 Files:
-- `mattermost.conf` — shell variables sourced by `mattermost_theme_switch`. Format: `MM_URL="https://host"`, `MM_HOST="%host%"` (percent-wrapped for cookie matching)
 - `forge.el` — Emacs Lisp, loaded by Emacs at startup. Corporate GitLab/GitHub hosts for forge, org-mode settings, or anything environment-specific
 
 Format convention: shell configs use `KEY=value`, Emacs configs use `.el` files with standard Lisp.
