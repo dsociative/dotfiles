@@ -1,0 +1,17 @@
+#!/bin/bash
+# Root helper for toggle-ecomode. Installed to /usr/local/bin by install-deps.
+set -e
+case "$1" in
+  on)  EPP=power;               NO_TURBO=1; PL=250; PKG_UW=35000000   ;;
+  off) EPP=balance_performance; NO_TURBO=0; PL=360; PKG_UW=4095875000 ;;
+  *)   echo "usage: ecomode-power on|off" >&2; exit 1 ;;
+esac
+for f in /sys/devices/system/cpu/cpu[0-9]*/cpufreq/energy_performance_preference; do
+  echo "$EPP" > "$f"
+done
+echo "$NO_TURBO" > /sys/devices/system/cpu/intel_pstate/no_turbo
+# Deck-style TDP cap via RAPL: PL1+PL2 in uW (off value = this board's boot default)
+RAPL=/sys/class/powercap/intel-rapl:0
+echo "$PKG_UW" > "$RAPL/constraint_0_power_limit_uw"
+echo "$PKG_UW" > "$RAPL/constraint_1_power_limit_uw"
+/usr/bin/nvidia-smi -pl "$PL" >/dev/null

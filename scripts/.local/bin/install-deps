@@ -91,6 +91,12 @@ fi
 # Stow all packages
 echo "Stowing dotfiles..."
 cd "$(dirname "$(readlink -f "$0")")/../../../"
-stow emacs foot gnupg gtk kitty niri scripts waybar
+stow emacs foot gnupg gtk hyprland kitty niri scripts waybar
+
+# Eco mode: root helper + passwordless sudo entry (see scripts/.local/share/ecomode/)
+echo "Installing ecomode root helper..."
+sudo install -m 0755 -o root -g root scripts/.local/share/ecomode/ecomode-power /usr/local/bin/ecomode-power
+visudo -c -f scripts/.local/share/ecomode/sudoers
+sudo install -m 0440 -o root -g root scripts/.local/share/ecomode/sudoers /etc/sudoers.d/ecomode
 
 echo "Done."

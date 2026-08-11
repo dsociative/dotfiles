@@ -159,6 +159,12 @@ button:hover {
     min-width: 16px;
 }
 
+#custom-ecomode {
+    background: #d2ebe3;
+    color: #465953;
+    padding: 0 10px;
+}
+
 #network {
     background-color: #dde4f2;
     color: #4c5361;

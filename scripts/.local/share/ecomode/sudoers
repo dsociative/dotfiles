@@ -1,0 +1,1 @@
+dsociative ALL=(root) NOPASSWD: /usr/local/bin/ecomode-power on, /usr/local/bin/ecomode-power off

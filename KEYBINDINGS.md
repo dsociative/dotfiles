@@ -8,6 +8,7 @@
 | `Mod+R`           | Launcher (fuzzel)               |
 | `Mod+S`           | Screenshot (grim+slurp+wl-copy) |
 | `Mod+N`           | Toggle darkmode                 |
+| `Mod+B`           | Toggle eco mode (hyprland)      |
 | `Mod+O`           | Toggle overview                 |
 | `Mod+C`           | Close window                    |
 | `Mod+Shift+Slash` | Hotkey overlay                  |

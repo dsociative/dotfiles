@@ -1,1 +1,4 @@
 *.elc
+
+# Superpowers workflow artifacts (specs/plans from brainstorming → writing-plans)
+docs/superpowers/

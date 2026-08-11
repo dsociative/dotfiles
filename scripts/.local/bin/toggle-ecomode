@@ -1,0 +1,18 @@
+#!/bin/bash
+# Toggle eco power mode: single 60Hz monitor, CPU powersave, GPU capped.
+set -e
+HYPR=~/.config/hypr
+
+if [[ $(readlink "$HYPR/powermode.conf") == *eco* ]]; then
+  sudo /usr/local/bin/ecomode-power off
+  ln -sf powermode-normal.conf "$HYPR/powermode.conf"
+else
+  sudo /usr/local/bin/ecomode-power on
+  ln -sf powermode-eco.conf "$HYPR/powermode.conf"
+  # Dark theme cuts OLED panel power
+  if [[ $(dconf read /org/gnome/desktop/interface/color-scheme) != "'prefer-dark'" ]]; then
+    toggle-darkmode
+  fi
+fi
+hyprctl reload
+pkill -RTMIN+9 waybar || true
