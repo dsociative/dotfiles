@@ -1,0 +1,6 @@
+/* Black (OLED) theme — gruvbox with pure-black bar */
+@import url("gruvbox.css");
+
+window#waybar {
+    background-color: #000000;
+}

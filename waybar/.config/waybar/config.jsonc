@@ -7,24 +7,12 @@
     "spacing": 0, // Gaps between modules (4px)
     // Choose the order of the modules
     "modules-left": [
-        "niri/workspaces",
         "hyprland/workspaces"
     ],
     "modules-center": [
-        "niri/language",
         "hyprland/language",
-        "niri/window",
         "hyprland/window"
     ],
-    "niri/window": {
-        "format": "{}",
-        "separate-outputs": true
-    },
-    "niri/language": {
-        "format": "{}",
-        "format-en": "EN",
-        "format-ru": "RU"
-    },
     "modules-right": [
         "custom/ecomode",
         "mpd",
@@ -50,15 +38,6 @@
         "signal": 9,
         "on-click": "toggle-ecomode",
         "tooltip": false
-    },
-    "niri/workspaces": {
-        "format": "{name}:{icon}",
-        "format-icons": {
-            "0": " ",
-            "1": " ",
-            "2": " ",
-            "3": " "
-        }
     },
     "keyboard-state": {
         "numlock": true,

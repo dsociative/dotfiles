@@ -1,18 +1,36 @@
 #!/bin/bash
-# Toggle eco power mode: single 60Hz monitor, CPU powersave, GPU capped.
+# Toggle eco power mode: 60Hz monitors, CPU powersave, GPU capped, black OLED theme.
+# Eco ON  -> black theme (kitty + hyprland + waybar + emacs).
+# Eco OFF -> default gruvbox (dark). While in eco, toggle-darkmode is a no-op.
 set -e
 HYPR=~/.config/hypr
+KITTY=~/.config/kitty
+WAYBAR=~/.config/waybar
+
+apply_theme() {  # $1 = variant basename (black|gruvbox), $2 = emacs theme name
+  ln -sf "$1.conf" "$KITTY/current-theme.conf"
+  for sock in "$XDG_RUNTIME_DIR"/kitty-*; do
+    kitty @ --to unix:"$sock" set-colors --all --configured "$KITTY/$1.conf" 2>/dev/null || true
+  done
+  ln -sf "$1.conf" "$HYPR/theme.conf"
+  ln -sf "$1.css" "$WAYBAR/style.css"
+  emacsclient -e "(my/set-theme '$2)" 2>/dev/null || true
+}
 
 if [[ $(readlink "$HYPR/powermode.conf") == *eco* ]]; then
   sudo /usr/local/bin/ecomode-power off
   ln -sf powermode-normal.conf "$HYPR/powermode.conf"
+  # Restore default theme: gruvbox (dark)
+  apply_theme gruvbox doom-gruvbox
+  dconf write /org/gnome/desktop/interface/color-scheme "'prefer-dark'"
+  gsettings set org.gnome.desktop.interface gtk-theme Gruvbox
 else
   sudo /usr/local/bin/ecomode-power on
   ln -sf powermode-eco.conf "$HYPR/powermode.conf"
-  # Dark theme cuts OLED panel power
-  if [[ $(dconf read /org/gnome/desktop/interface/color-scheme) != "'prefer-dark'" ]]; then
-    toggle-darkmode
-  fi
+  # Black OLED theme
+  apply_theme black doom-ir-black
+  dconf write /org/gnome/desktop/interface/color-scheme "'prefer-dark'"
 fi
 hyprctl reload
+killall -SIGUSR2 waybar 2>/dev/null || true
 pkill -RTMIN+9 waybar || true

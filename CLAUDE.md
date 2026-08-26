@@ -11,10 +11,10 @@ Personal dotfiles repository for an Arch Linux setup, managed with GNU Stow. Eac
 Repository uses GNU Stow layout. Each package mirrors the home directory hierarchy:
 
 - `emacs/.emacs.d/` - Emacs init.el and modular config split into feature files
-- `foot/.config/foot/` - Foot terminal config with dual color themes
+- `kitty/.config/kitty/` - Kitty terminal config with dual color themes
 - `gnupg/.gnupg/` - GPG agent config
 - `gtk/.themes/` - Gruvbox/Flatwhite GTK3 themes
-- `niri/.config/niri/` - Niri Wayland compositor config (KDL format)
+- `hyprland/.config/hypr/` - Hyprland Wayland compositor config
 - `waybar/.config/waybar/` - Waybar status bar config and styling
 - `scripts/.local/bin/` - Shell scripts for theme switching and dependency installation
 
@@ -27,18 +27,18 @@ The Emacs config is split by concern in `emacs/.emacs.d/config/`. Each file prov
 - **ai.el** - gptel with Claude/DeepSeek backends, MCP hub integration
 - **unstable.el** - Experimental: terraform, k8s, combobulate (structural editing), treesit grammars, org-publish, org-crypt, reverse-im (Russian keyboard support), SPC-leader evil keybindings
 
-## Niri
+## Hyprland
 
-Wayland compositor (scrollable tiling). Dual 4K monitors (DP-1, DP-2) at scale 1.5. Keyboard layout: us,ru with Win+Space toggle. Vim-style navigation (Mod+HJKL). Key binds: Mod+Q terminal (foot), Mod+R launcher (fuzzel), Mod+S screenshot (grim+slurp), Mod+F maximize, Mod+C close. Spawns waybar at startup.
+Wayland compositor (scrolling layout). Dual 4K monitors (DP-1, DP-2) at scale 1.5. Keyboard layout: us,ru with Win+Space toggle. Vim-style navigation (Mod+HJKL). Key binds: Mod+Q terminal (kitty), Mod+R launcher (fuzzel), Mod+S screenshot (grim+slurp), Mod+F fullscreen, Mod+C close, Mod+N toggle darkmode, Mod+B eco mode. Config sources `theme.conf` (theme) and `powermode.conf` (monitors/eco) at end. Spawns waybar at startup.
 
 ## Waybar
 
-Top bar with modules: workspaces, window title, language indicator (pulsing red on RU), pulseaudio, cpu, memory, temperature, clock, tray. Font: Zed Mono. Has hyprland modules left over from migration — active modules are niri-specific (`niri/language`).
+Top bar with modules: workspaces, window title, language indicator (pulsing red on RU), custom/ecomode (🍃 in eco mode), pulseaudio, cpu, memory, temperature, clock, tray. Font: Zed Mono. Uses hyprland-specific modules (`hyprland/workspaces`, `hyprland/language`, `hyprland/window`).
 
 ## Scripts
 
-- **toggle-darkmode** - Toggles system-wide dark/light theme: dconf, foot, kitty, emacs, waybar, niri, hyprland, GTK theme
-- **foot-launch** - Launches foot with correct color theme based on current dconf setting
+- **toggle-darkmode** - Toggles system-wide dark/light theme: dconf, kitty, emacs, waybar, hyprland, GTK theme
+- **toggle-ecomode** - Toggles eco power mode (Mod+B): 60Hz monitors, CPU/GPU power caps, dark theme
 - **install-deps** - Installs all Arch Linux packages required by these configs (pacman + AUR)
 
 ## Key Conventions

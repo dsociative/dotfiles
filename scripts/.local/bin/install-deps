@@ -4,12 +4,11 @@ set -euo pipefail
 # Install all dependencies for dotfiles configs on Arch Linux
 
 PACMAN_PACKAGES=(
-  # Core: niri compositor + wayland
-  niri
-  xdg-desktop-portal-gnome
+  # Core: Hyprland compositor + wayland
+  hyprland
+  xdg-desktop-portal-hyprland
 
   # Terminal & shell
-  foot
   kitty
 
   # Status bar
@@ -91,7 +90,7 @@ fi
 # Stow all packages
 echo "Stowing dotfiles..."
 cd "$(dirname "$(readlink -f "$0")")/../../../"
-stow emacs foot gnupg gtk hyprland kitty niri scripts waybar
+stow emacs gnupg gtk hyprland kitty scripts waybar
 
 # Eco mode: root helper + passwordless sudo entry (see scripts/.local/share/ecomode/)
 echo "Installing ecomode root helper..."

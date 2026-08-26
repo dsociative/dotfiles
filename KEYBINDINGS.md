@@ -1,26 +1,50 @@
 # Keybindings Reference
-## Niri (config.kdl)
+## Hyprland (hyprland.conf)
 
 ### Apps & Actions
-| Key               | Action                          |
-|-------------------|---------------------------------|
-| `Mod+Q`           | Terminal (alacritty)            |
-| `Mod+R`           | Launcher (fuzzel)               |
-| `Mod+S`           | Screenshot (grim+slurp+wl-copy) |
-| `Mod+N`           | Toggle darkmode                 |
-| `Mod+B`           | Toggle eco mode (hyprland)      |
-| `Mod+O`           | Toggle overview                 |
-| `Mod+C`           | Close window                    |
-| `Mod+Shift+Slash` | Hotkey overlay                  |
-| `Super+Alt+L`     | Lock screen (swaylock)          |
-| `Super+Alt+S`     | Toggle screen reader (orca)     |
-| `Mod+Shift+E`     | Quit (confirm)                  |
-| `Ctrl+Alt+Delete` | Quit                            |
-| `Mod+Shift+P`     | Power off monitors              |
-| `Mod+Escape`      | Toggle shortcuts inhibitor      |
-| `Print`           | Screenshot                      |
-| `Ctrl+Print`      | Screenshot screen               |
-| `Alt+Print`       | Screenshot window               |
+| Key           | Action                         |
+|---------------|--------------------------------|
+| `Mod+Q`       | Terminal (kitty)               |
+| `Mod+R`       | Launcher (fuzzel)              |
+| `Mod+S`       | Screenshot region (grim+slurp) |
+| `Mod+C`       | Close window                   |
+| `Mod+V`       | Toggle floating                |
+| `Mod+F`       | Fullscreen                     |
+| `Mod+N`       | Toggle darkmode                |
+| `Mod+B`       | Toggle eco mode                |
+| `Mod+P`       | Power off monitors (dpms off)  |
+| `Mod+Shift+P` | Power on monitors (dpms on)    |
+| `Mod+Shift+E` | Exit Hyprland                  |
+
+### Navigation (vim HJKL)
+| Key     | Action      |
+|---------|-------------|
+| `Mod+H` | Focus left  |
+| `Mod+J` | Focus down  |
+| `Mod+K` | Focus up    |
+| `Mod+L` | Focus right |
+
+### Layout (scrolling)
+| Key           | Action                    |
+|---------------|---------------------------|
+| `Mod+D`       | Cycle preset column width |
+| `Mod+Shift+D` | Cycle preset (reverse)    |
+| `Mod+Minus`   | Column width -10%         |
+| `Mod+Equal`   | Column width +10%         |
+| `Mod+T`       | Center focused column     |
+
+### Workspaces
+| Key              | Action                    |
+|------------------|---------------------------|
+| `Mod+1..0`       | Switch to workspace 1..10 |
+| `Mod+Shift+1..0` | Move window to workspace  |
+| `Mod+Scroll`     | Cycle workspaces          |
+
+### Mouse (with Mod)
+| Key       | Action        |
+|-----------|---------------|
+| `Mod+LMB` | Move window   |
+| `Mod+RMB` | Resize window |
 
 ### Media Keys
 | Key                     | Action          |
@@ -31,81 +55,8 @@
 | `XF86AudioMicMute`      | Toggle mic mute |
 | `XF86MonBrightnessUp`   | Brightness up   |
 | `XF86MonBrightnessDown` | Brightness down |
-
-### Navigation (arrows / vim HJKL)
-| Key                 | Action               |
-|---------------------|----------------------|
-| `Mod+H/Left`        | Focus column left    |
-| `Mod+J/Down`        | Focus window down    |
-| `Mod+K/Up`          | Focus window up      |
-| `Mod+L/Right`       | Focus column right   |
-| `Mod+Home`          | Focus first column   |
-| `Mod+End`           | Focus last column    |
-| `Mod+U / Page_Down` | Focus workspace down |
-| `Mod+I / Page_Up`   | Focus workspace up   |
-| `Mod+1..9`          | Focus workspace N    |
-
-### Move Windows
-| Key                      | Action                        |
-|--------------------------|-------------------------------|
-| `Mod+Ctrl+H/Left`        | Move column left              |
-| `Mod+Ctrl+J/Down`        | Move window down              |
-| `Mod+Ctrl+K/Up`          | Move window up                |
-| `Mod+Ctrl+L/Right`       | Move column right             |
-| `Mod+Ctrl+Home`          | Move column to first          |
-| `Mod+Ctrl+End`           | Move column to last           |
-| `Mod+Ctrl+U / Page_Down` | Move column to workspace down |
-| `Mod+Ctrl+I / Page_Up`   | Move column to workspace up   |
-| `Mod+Shift+1..9`         | Move column to workspace N    |
-
-### Monitor Navigation
-| Key                      | Action                       |
-|--------------------------|------------------------------|
-| `Mod+Shift+H/Left`       | Focus monitor left           |
-| `Mod+Shift+J/Down`       | Focus monitor down           |
-| `Mod+Shift+K/Up`         | Focus monitor up             |
-| `Mod+Shift+L/Right`      | Focus monitor right          |
-| `Mod+Shift+Ctrl+H/Left`  | Move column to monitor left  |
-| `Mod+Shift+Ctrl+J/Down`  | Move column to monitor down  |
-| `Mod+Shift+Ctrl+K/Up`    | Move column to monitor up    |
-| `Mod+Shift+Ctrl+L/Right` | Move column to monitor right |
-
-### Workspace Reorder
-| Key                       | Action              |
-|---------------------------|---------------------|
-| `Mod+Shift+U / Page_Down` | Move workspace down |
-| `Mod+Shift+I / Page_Up`   | Move workspace up   |
-
-### Layout
-| Key                | Action                      |
-|--------------------|-----------------------------|
-| `Mod+D`            | Switch preset column width  |
-| `Mod+F`            | Maximize column             |
-| `Mod+Shift+F`      | Fullscreen window           |
-| `Mod+Ctrl+F`       | Expand to available width   |
-| `Mod+T`            | Center column               |
-| `Mod+Ctrl+C`       | Center visible columns      |
-| `Mod+V`            | Toggle floating             |
-| `Mod+Shift+V`      | Switch focus float/tiling   |
-| `Mod+W`            | Toggle tabbed display       |
-| `Mod+Comma`        | Consume window into column  |
-| `Mod+Period`       | Expel window from column    |
-| `Mod+BracketLeft`  | Consume/expel left          |
-| `Mod+BracketRight` | Consume/expel right         |
-| `Mod+Minus`        | Column width -10%           |
-| `Mod+Equal`        | Column width +10%           |
-| `Mod+Shift+Minus`  | Window height -10%          |
-| `Mod+Shift+Equal`  | Window height +10%          |
-| `Mod+Shift+R`      | Switch preset window height |
-| `Mod+Ctrl+R`       | Reset window height         |
-
-### Mouse (with Mod)
-| Key                        | Action                   |
-|----------------------------|--------------------------|
-| `Mod+WheelDown/Up`         | Focus workspace down/up  |
-| `Mod+Ctrl+WheelDown/Up`    | Move column to workspace |
-| `Mod+WheelRight/Left`      | Focus column right/left  |
-| `Mod+Ctrl+WheelRight/Left` | Move column right/left   |
+| `XF86AudioPlay/Pause`   | Play / pause    |
+| `XF86AudioNext/Prev`    | Next / prev     |
 
 ---
 
@@ -204,7 +155,6 @@
 
 ---
 
-## Occupied Mod+ Keys (Niri)
-C, D, F, H, I, J, K, L, N, O, Q, R, S, T, U, V, W, 1-9,
-Comma, Period, Minus, Equal, BracketLeft, BracketRight,
-Home, End, Escape
+## Occupied Mod+ Keys (Hyprland)
+B, C, D, F, H, J, K, L, N, P, Q, R, S, T, V, 0-9, Minus, Equal
+Mod+Shift: D, E, P, 0-9

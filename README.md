@@ -1,6 +1,6 @@
 # dotfiles
 
-Arch Linux setup managed with [GNU Stow](https://www.gnu.org/software/stow/). Niri compositor, foot terminal, Emacs, waybar.
+Arch Linux setup managed with [GNU Stow](https://www.gnu.org/software/stow/). Hyprland compositor, kitty terminal, Emacs, waybar.
 
 ## Screenshots
 
@@ -20,7 +20,7 @@ cd ~/dotfiles
 
 ## Theme toggle
 
-`Mod+N` switches between dark (gruvbox) and light (flatwhite) across all apps: niri, foot, kitty, emacs, waybar, hyprland, GTK.
+`Mod+N` switches between dark (gruvbox) and light (flatwhite) across all apps: kitty, emacs, waybar, hyprland, GTK.
 
 ## Eco mode
 
