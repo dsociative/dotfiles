@@ -33,13 +33,16 @@ Wayland compositor (scrolling layout). Dual 4K monitors (DP-1, DP-2) at scale 1.
 
 ## Waybar
 
-Top bar with modules: workspaces, window title, language indicator (pulsing red on RU), custom/ecomode (🍃 in eco mode), pulseaudio, cpu, memory, temperature, clock, tray. Font: Zed Mono. Uses hyprland-specific modules (`hyprland/workspaces`, `hyprland/language`, `hyprland/window`).
+Top bar with modules: custom/windows, language indicator (pulsing red on RU), custom/ecomode (🍃 in eco mode), pulseaudio, cpu, memory, temperature, clock, tray. Font: CaskaydiaCove Nerd Font (see the CSS). Uses `hyprland/language`.
+
+`custom/windows` replaces `hyprland/workspaces` + `hyprland/window`: it is fed by `scripts/.local/bin/waybar-windows` (one instance per bar, Hyprland IPC sockets, no polling) and shows this output's workspaces (bold pills, the active one inverted) with a short label per window (18 chars max, full titles in the tooltip; scroll switches workspaces). Kitty labels are derived from the window title, which kitty shell integration / Claude Code / remote shells already maintain: `󰚩` Claude Code busy, orange `󰚩` Claude waiting for input, `󰣀` ssh, dimmed `` shell at prompt, `` running command; the dimmed suffix is the shell's cwd read from `/proc`. Colors come from the `style.css` symlink target (flatwhite → light palette, otherwise dark).
 
 ## Scripts
 
 - **toggle-darkmode** - Toggles system-wide dark/light theme: dconf, kitty, emacs, waybar, hyprland, GTK theme
 - **toggle-ecomode** - Toggles eco power mode (Mod+B): 60Hz monitors, CPU/GPU power caps, dark theme
 - **install-deps** - Installs all Arch Linux packages required by these configs (pacman + AUR)
+- **waybar-windows** - Waybar `custom/windows` module: Hyprland workspaces with per-window status labels (python3, stdlib only)
 
 ## Key Conventions
 
@@ -56,6 +59,10 @@ Top bar with modules: workspaces, window title, language indicator (pulsing red 
 cd ~/dotfiles
 install-deps  # or: scripts/.local/bin/install-deps
 ```
+
+## Tests
+
+`python -m unittest discover tests` — unit tests for `waybar-windows` (pure `label`/`render` functions; no waybar or Hyprland needed).
 
 ## Maintaining install-deps
 

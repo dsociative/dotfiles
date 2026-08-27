@@ -149,9 +149,10 @@
 ---
 
 ## Waybar (config.jsonc)
-| Action           | Handler     |
-|------------------|-------------|
-| PulseAudio click | pavucontrol |
+| Action                   | Handler             |
+|--------------------------|---------------------|
+| PulseAudio click         | pavucontrol         |
+| Scroll on windows module | workspace e-1 / e+1 |
 
 ---
 

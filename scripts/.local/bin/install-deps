@@ -54,6 +54,7 @@ PACMAN_PACKAGES=(
   ripgrep
   stow
   jq
+  python  # waybar-windows (also a kitty dependency)
   curl
   sqlite
 

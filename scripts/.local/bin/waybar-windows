@@ -1,0 +1,227 @@
+#!/usr/bin/env python3
+"""Waybar custom module: Hyprland workspaces with per-window status labels.
+
+One instance per bar (waybar sets WAYBAR_OUTPUT_NAME). Listens on Hyprland's
+event socket, re-queries state after every burst of events and prints one JSON
+line ({"text": ..., "tooltip": ...}) whenever the rendered bar changes.
+
+Kitty windows are labelled from their title, which is already kept up to date by
+kitty's shell integration (cwd at the prompt, command line while running),
+Claude Code ("◐|◑ topic" while busy, "✳ topic" when waiting for you) and remote
+shells ("user@host: cwd"). The shell's cwd comes from /proc, no processes are
+spawned. Usage: waybar-windows [--once] [--output DP-1]
+"""
+import html
+import json
+import os
+import re
+import select
+import socket
+import sys
+import time
+
+MAXLEN = 18                      # code points per label, then "…"
+DEBOUNCE, DEBOUNCE_MAX = 0.05, 0.2
+
+ROBOT, SSH, COG, TERM = "\U000F06A9", "\U000F08C0", "\uf013", "\uf120"
+GLYPHS = {
+    "firefox": "",
+    "emacs": "",
+    "chromium": "",
+    "telegram": "",
+    "steam": "",
+    "Mattermost": "\U000F0B79",
+    "default": "",
+}
+PALETTES = {  # waybar css symlink decides; alpha-dimming is theme independent
+    # ws_*: inactive workspace pill, active_*: focused workspace pill (inverted), accent: needs attention
+    "dark": {"ws_bg": "#3c3836", "ws_fg": "#ebdbb2", "active_bg": "#ebdbb2", "active_fg": "#282828",
+             "accent": "#fe8019"},
+    "light": {"ws_bg": "#e4ddd2", "ws_fg": "#605a52", "active_bg": "#605a52", "active_fg": "#f7f3ee",
+              "accent": "#f08c00"},
+}
+SHELLS = {"zsh", "bash", "fish"}
+STYLE_CSS = os.path.expanduser("~/.config/waybar/style.css")
+HOME = os.path.expanduser("~")
+
+RE_CLAUDE_BUSY = re.compile(r"^[◐◑] (.+)$")
+RE_CLAUDE_WAIT = re.compile(r"^✳ (.+)$")
+RE_REMOTE = re.compile(r"^(\S+)@([^:\s]+):\s*(.*)$")
+RE_SSH = re.compile(r"^ssh(?:\s+(.*))?$")
+RE_CONTROL = re.compile(r"[\x00-\x1f\x7f]")
+
+
+def clip(s, n=MAXLEN):
+    return s if len(s) <= n else s[: n - 1] + "…"
+
+
+def esc(s):
+    return html.escape(s, quote=False)
+
+
+def dim(markup):
+    return f'<span alpha="50%">{markup}</span>'
+
+
+def accent(glyph, palette):
+    return f'<span foreground="{palette["accent"]}">{glyph}</span>'
+
+
+def pill(name, palette, active):
+    bg, fg = (palette["active_bg"], palette["active_fg"]) if active else (palette["ws_bg"], palette["ws_fg"])
+    return f'<span background="{bg}" foreground="{fg}"><b> {esc(name)} </b></span>'
+
+
+def short_dir(path):
+    path = path.rstrip("/") or "/"
+    if path == HOME:
+        return "~"
+    return os.path.basename(path) or "/"
+
+
+def with_cwd(text, cwd, topic):
+    """Append the dimmed cwd basename unless unknown or already named in the topic."""
+    if not cwd:
+        return text
+    d = short_dir(cwd)
+    return text if d in topic else f"{text} {dim(esc(d))}"
+
+
+def kitty_label(title, cwd, palette):
+    if m := RE_CLAUDE_BUSY.match(title):
+        return with_cwd(f"{ROBOT} {esc(clip(m.group(1)))}", cwd, m.group(1))
+    if m := RE_CLAUDE_WAIT.match(title):
+        return with_cwd(f"{accent(ROBOT, palette)} {esc(clip(m.group(1)))}", cwd, m.group(1))
+    if m := RE_REMOTE.match(title):
+        return f"{SSH} {esc(clip(f'{m.group(2)}: {m.group(3)}'))}"
+    if m := RE_SSH.match(title):
+        return f"{SSH} {esc(clip(m.group(1) or 'ssh'))}"
+    if title[:1] in ("~", "/", "…"):  # shell integration: title is the cwd → at prompt
+        return dim(f"{TERM} {esc(clip(title))}")
+    return with_cwd(f"{COG} {esc(clip(title))}", cwd, title)  # title is the running command
+
+
+def label(client, cwd, palette):
+    title = RE_CONTROL.sub(" ", client.get("title") or "")
+    cls = client.get("class") or ""
+    if cls == "kitty":
+        return kitty_label(title, cwd, palette)
+    title = title.removesuffix(" — Mozilla Firefox")
+    glyph = GLYPHS.get(cls) or (GLYPHS["steam"] if cls.startswith("steam_app_") else GLYPHS["default"])
+    return f"{glyph} {esc(clip(title))}".rstrip()
+
+
+def shell_cwd(pid):
+    """cwd of the single shell child of `pid` (kitty → zsh), or None if unknown/ambiguous."""
+    try:
+        with open(f"/proc/{pid}/task/{pid}/children") as f:
+            kids = f.read().split()
+        shells = []
+        for kid in kids:
+            try:
+                with open(f"/proc/{kid}/comm") as f:
+                    comm = f.read().strip()
+            except OSError:
+                continue
+            if comm in SHELLS:
+                shells.append(kid)
+        if len(shells) != 1:
+            return None
+        return os.readlink(f"/proc/{shells[0]}/cwd")
+    except OSError:
+        return None
+
+
+def theme_name(style_css=STYLE_CSS):
+    try:
+        target = os.readlink(style_css)
+    except OSError:
+        return "dark"
+    return "light" if "flatwhite" in os.path.basename(target) else "dark"
+
+
+def render(monitors, workspaces, clients, out, palette, cwd_of=None):
+    """Bar text for output `out` (None = all outputs) and a tooltip with full titles."""
+    cwd_of = cwd_of or shell_cwd
+    mons = [m for m in monitors if out is None or m["name"] == out]
+    names = {m["name"] for m in mons}
+    active = {m["activeWorkspace"]["id"] for m in mons}
+    wss = sorted((w for w in workspaces if w["id"] > 0 and w["monitor"] in names), key=lambda w: w["id"])
+    by_ws = {}
+    for c in clients:
+        if not c.get("mapped", True) or not (c.get("class") or c.get("title")):
+            continue
+        by_ws.setdefault(c["workspace"]["id"], []).append(c)
+    groups, tips = [], []
+    for w in wss:
+        wins = sorted(by_ws.get(w["id"], []), key=lambda c: (*c.get("at", (0, 0)), c["address"]))
+        name = pill(w["name"], palette, active=w["id"] in active)
+        labels = []
+        for c in wins:
+            cwd = cwd_of(c["pid"]) if c.get("class") == "kitty" else None
+            text = label(c, cwd, palette)
+            labels.append(f"<b>{text}</b>" if c.get("focusHistoryID") == 0 else text)
+            tips.append(f"{w['name']}: {esc(c.get('title') or '')}" + (f"  [{esc(cwd)}]" if cwd else ""))
+        groups.append(f"{name} {'  '.join(labels)}" if labels else name)
+    return {"text": "   ".join(groups), "tooltip": "\n".join(tips)}
+
+
+def hypr_dir():
+    sig = os.environ.get("HYPRLAND_INSTANCE_SIGNATURE")
+    if not sig:
+        sys.exit("waybar-windows: HYPRLAND_INSTANCE_SIGNATURE is not set")
+    return os.path.join(os.environ.get("XDG_RUNTIME_DIR", f"/run/user/{os.getuid()}"), "hypr", sig)
+
+
+def hypr(cmd):
+    with socket.socket(socket.AF_UNIX) as s:
+        s.settimeout(2)
+        s.connect(os.path.join(hypr_dir(), ".socket.sock"))
+        s.sendall(b"j/" + cmd.encode())
+        chunks = []
+        while chunk := s.recv(65536):
+            chunks.append(chunk)
+    return json.loads(b"".join(chunks))
+
+
+def snapshot(out, palette):
+    return json.dumps(render(hypr("monitors"), hypr("workspaces"), hypr("clients"), out, palette),
+                      ensure_ascii=False)
+
+
+def main(argv):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # readlink may yield surrogates
+    args = argv[1:]
+    out = args[args.index("--output") + 1] if "--output" in args else os.environ.get("WAYBAR_OUTPUT_NAME") or None
+    palette = PALETTES[theme_name()]
+    if "--once" in args:
+        print(snapshot(out, palette))
+        return 0
+    ev = socket.socket(socket.AF_UNIX)
+    ev.connect(os.path.join(hypr_dir(), ".socket2.sock"))
+    last = None
+    while True:
+        try:
+            line = snapshot(out, palette)
+        except (OSError, ValueError) as e:  # skip this tick; the next event retries
+            print(f"waybar-windows: {e}", file=sys.stderr)
+        else:
+            if line != last:  # ◐/◑ spinner frames render identically → no relayout in waybar
+                last = line
+                print(line, flush=True)
+        if not ev.recv(65536):  # Hyprland went away → let waybar restart us
+            return 1
+        deadline = time.monotonic() + DEBOUNCE_MAX  # coalesce bursts, but never starve rendering
+        while (t := min(DEBOUNCE, deadline - time.monotonic())) > 0 and select.select([ev], [], [], t)[0]:
+            if not ev.recv(65536):
+                return 1
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main(sys.argv))
+    except BrokenPipeError:  # waybar is gone
+        os.dup2(os.open(os.devnull, os.O_WRONLY), sys.stdout.fileno())
+        sys.exit(0)
+    except KeyboardInterrupt:
+        sys.exit(130)

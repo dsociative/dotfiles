@@ -7,13 +7,11 @@
     "spacing": 0, // Gaps between modules (4px)
     // Choose the order of the modules
     "modules-left": [
-        "hyprland/workspaces"
+        "custom/windows"
     ],
-    "modules-center": [
-        "hyprland/language",
-        "hyprland/window"
-    ],
+    "modules-center": [],
     "modules-right": [
+        "hyprland/language",
         "custom/ecomode",
         "mpd",
         // "idle_inhibitor",
@@ -32,6 +30,15 @@
         // "custom/power"
     ],
     // Modules configuration
+    "custom/windows": {
+        // Workspaces of this output with a status label per window (see scripts/.local/bin/waybar-windows)
+        "exec": "waybar-windows",
+        "return-type": "json",
+        "restart-interval": 5,
+        "exec-on-event": false,
+        "on-scroll-up": "hyprctl dispatch workspace e-1",
+        "on-scroll-down": "hyprctl dispatch workspace e+1"
+    },
     "custom/ecomode": {
         "exec": "readlink ~/.config/hypr/powermode.conf | grep -q eco && echo 🍃 || true",
         "interval": "once",
@@ -47,24 +54,6 @@
             "locked": "",
             "unlocked": ""
         }
-    },
-    "hyprland/workspaces": {
-        "format": "{name} {windows}",
-        "format-window-separator": " ",
-        "window-rewrite-default": "",
-        "window-rewrite": {
-            "class<firefox>": "",
-            "class<kitty>": "",
-            "class<emacs>": "",
-            "class<chromium>": "",
-            "class<telegram>": "",
-            "class<steam>": "",
-            "class<Mattermost>": "󰭹"
-        }
-    },
-    "hyprland/window": {
-        "format": "{}",
-        "separate-outputs": true
     },
     "hyprland/language": {
         "format": "{}",
