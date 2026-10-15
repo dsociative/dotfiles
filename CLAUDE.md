@@ -29,7 +29,7 @@ The Emacs config is split by concern in `emacs/.emacs.d/config/`. Each file prov
 
 ## Hyprland
 
-Wayland compositor (scrolling layout). Dual 4K monitors (DP-1, DP-2) at scale 1.5. Keyboard layout: us,ru with Win+Space toggle. Vim-style navigation (Mod+HJKL). Key binds: Mod+Q terminal (kitty), Mod+R launcher (fuzzel), Mod+S screenshot (grim+slurp), Mod+F fullscreen, Mod+C close, Mod+N toggle darkmode, Mod+B eco mode. Config sources `theme.conf` (theme) and `powermode.conf` (monitors/eco) at end. Spawns waybar at startup.
+Wayland compositor (scrolling layout). Dual 4K monitors (DP-1, DP-2) at scale 1.5. Keyboard layout: us,ru with Win+Space toggle. Vim-style navigation (Mod+HJKL). Key binds: Mod+Q terminal (kitty), Mod+R launcher (fuzzel), Mod+S screenshot (grim+slurp), Mod+F fullscreen, Mod+C close, Mod+N toggle darkmode, Mod+B eco mode. Config is Lua (`hyprland.lua`, required since Hyprland 0.55; `.conf` removed in 0.57): `powermode.lua` sets monitors and `theme.lua` sets colors based on `~/.config/hypr/state` (runtime file, KEY=VALUE: `theme=gruvbox|flatwhite|black`, `powermode=normal|eco`), read via `state.lua`. Spawns waybar at startup.
 
 ## Waybar
 

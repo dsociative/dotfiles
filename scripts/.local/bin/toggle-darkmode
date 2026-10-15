@@ -1,7 +1,15 @@
 #!/bin/bash
 
+# Runtime state shared with hyprland.lua (theme + powermode)
+STATE=~/.config/hypr/state
+[ -f "$STATE" ] || printf 'theme=gruvbox\npowermode=normal\n' > "$STATE"
+
+set_hypr_theme() {  # $1 = theme name (gruvbox|flatwhite|black)
+  sed -i "s/^theme=.*/theme=$1/" "$STATE"
+}
+
 # Theme toggle is disabled while in eco mode — eco owns the black theme
-if [[ $(readlink ~/.config/hypr/powermode.conf) == *eco* ]]; then
+if grep -q '^powermode=eco' "$STATE"; then
   exit 0
 fi
 
@@ -18,7 +26,7 @@ if [[ "$CURRENT" == "'prefer-dark'" ]]; then
     kitty @ --to unix:"$sock" set-colors --all --configured ~/.config/kitty/flatwhite.conf 2>/dev/null
   done
   # Hyprland
-  ln -sf flatwhite.conf ~/.config/hypr/theme.conf
+  set_hypr_theme flatwhite
   hyprctl reload 2>/dev/null
   gsettings set org.gnome.desktop.interface gtk-theme Flatwhite
 else
@@ -33,7 +41,7 @@ else
     kitty @ --to unix:"$sock" set-colors --all --configured ~/.config/kitty/gruvbox.conf 2>/dev/null
   done
   # Hyprland
-  ln -sf gruvbox.conf ~/.config/hypr/theme.conf
+  set_hypr_theme gruvbox
   hyprctl reload 2>/dev/null
   gsettings set org.gnome.desktop.interface gtk-theme Gruvbox
 fi

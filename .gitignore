@@ -1,3 +1,6 @@
+# Hyprland runtime state (theme/powermode, written by toggle scripts)
+hyprland/.config/hypr/state
+
 *.elc
 
 # Superpowers workflow artifacts (specs/plans from brainstorming → writing-plans)

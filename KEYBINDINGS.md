@@ -1,5 +1,5 @@
 # Keybindings Reference
-## Hyprland (hyprland.conf)
+## Hyprland (hyprland.lua)
 
 ### Apps & Actions
 | Key           | Action                         |
