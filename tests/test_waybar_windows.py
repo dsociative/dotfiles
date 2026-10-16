@@ -195,6 +195,15 @@ class RenderTest(unittest.TestCase):
         for n in ("1", "2", "3"):
             self.assertIn(f"<b> {n} </b></span>", text)
 
+    def test_pill_shows_workspace_number_not_name(self):
+        # Hyprland 0.55+ applies workspace default_name ("browser", "editor", ...);
+        # the bar keeps showing the workspace number, the name goes to the tooltip.
+        ws = [dict(w, name="browser") if w["id"] == 3 else w for w in WORKSPACES]
+        out = W.render(MONITORS, ws, CLIENTS, "DP-2", DARK, cwd_of=CWDS.get)
+        self.assertIn(W.pill("3", DARK, active=True), out["text"])
+        self.assertNotIn("browser", out["text"])
+        self.assertIn("browser:", out["tooltip"])
+
     def test_active_workspace_pill_is_inverted(self):
         text = render("DP-2")["text"]
         self.assertIn(f'<span background="{DARK["active_bg"]}" foreground="{DARK["active_fg"]}"><b> 3 </b></span>', text)

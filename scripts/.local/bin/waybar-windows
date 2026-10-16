@@ -155,7 +155,7 @@ def render(monitors, workspaces, clients, out, palette, cwd_of=None):
     groups, tips = [], []
     for w in wss:
         wins = sorted(by_ws.get(w["id"], []), key=lambda c: (*c.get("at", (0, 0)), c["address"]))
-        name = pill(w["name"], palette, active=w["id"] in active)
+        name = pill(str(w["id"]), palette, active=w["id"] in active)  # number; names from hyprland.lua go to the tooltip
         labels = []
         for c in wins:
             cwd = cwd_of(c["pid"]) if c.get("class") == "kitty" else None
