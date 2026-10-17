@@ -200,6 +200,7 @@
   (evil-org-agenda-set-keys))
 
 (use-package miasma-theme
+  :defer t
   ;; :config
   ;; (load-theme 'miasma t)
   )
