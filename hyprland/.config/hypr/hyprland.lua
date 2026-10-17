@@ -197,6 +197,10 @@ hl.bind(mainMod .. " + L", hl.dsp.focus({ direction = "right" }))
 hl.bind(mainMod .. " + K", hl.dsp.focus({ direction = "up" }))
 hl.bind(mainMod .. " + J", hl.dsp.focus({ direction = "down" }))
 
+-- Move active workspace to the neighbouring monitor (no wraparound)
+hl.bind(mainMod .. " + SHIFT + H", hl.dsp.workspace.move({ monitor = "l" }))
+hl.bind(mainMod .. " + SHIFT + L", hl.dsp.workspace.move({ monitor = "r" }))
+
 -- Scroll layout: column resize
 hl.bind(mainMod .. " + D", hl.dsp.layout("colresize +conf"))
 hl.bind(mainMod .. " + SHIFT + D", hl.dsp.layout("colresize -conf"))

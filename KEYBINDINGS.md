@@ -17,12 +17,14 @@
 | `Mod+Shift+E` | Exit Hyprland                  |
 
 ### Navigation (vim HJKL)
-| Key     | Action      |
-|---------|-------------|
-| `Mod+H` | Focus left  |
-| `Mod+J` | Focus down  |
-| `Mod+K` | Focus up    |
-| `Mod+L` | Focus right |
+| Key           | Action                          |
+|---------------|---------------------------------|
+| `Mod+H`       | Focus left                      |
+| `Mod+J`       | Focus down                      |
+| `Mod+K`       | Focus up                        |
+| `Mod+L`       | Focus right                     |
+| `Mod+Shift+H` | Move workspace to left monitor  |
+| `Mod+Shift+L` | Move workspace to right monitor |
 
 ### Layout (scrolling)
 | Key           | Action                    |
