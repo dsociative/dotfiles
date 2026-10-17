@@ -32,43 +32,6 @@
                       :stream t
                       :key (my/auth-source-key "api.deepseek.com")))
 
-(use-package vterm
-  :ensure t
-  :custom
-  (vterm-timer-delay 0.1)
-  (vterm-max-scrollback 1000)
-  :config
-  ;; Отключить line-numbers в vterm (issue #375 — CPU loop)
-  (add-hook 'vterm-mode-hook
-            (lambda () (setq-local display-line-numbers nil)))
-
-  ;; Не создавать таймеры для невидимых буферов
-  (defun my/vterm-skip-invalidate-when-hidden (orig-fn)
-    "Don't schedule redraw timers for invisible vterm buffers."
-    (if (get-buffer-window (current-buffer) t)
-        (funcall orig-fn)
-      (setq vterm--redraw-immediately nil)))
-  (advice-add 'vterm--invalidate :around #'my/vterm-skip-invalidate-when-hidden)
-
-  ;; Страховка: пропускать redraw для невидимых, чистить timer state
-  (defun my/vterm-skip-redraw-when-hidden (orig-fn buffer)
-    "Skip vterm redraw when buffer is not visible."
-    (when (buffer-live-p buffer)
-      (if (get-buffer-window buffer t)
-          (funcall orig-fn buffer)
-        (with-current-buffer buffer
-          (setq vterm--redraw-timer nil)))))
-  (advice-add 'vterm--delayed-redraw :around #'my/vterm-skip-redraw-when-hidden)
-
-  ;; Принудительный redraw когда буфер снова становится видимым
-  (add-hook 'window-buffer-change-functions
-            (lambda (_frame)
-              (when (and (eq major-mode 'vterm-mode)
-                         (bound-and-true-p vterm--term))
-                (let ((inhibit-redisplay t)
-                      (inhibit-read-only t))
-                  (vterm--redraw vterm--term))))))
-
 (use-package cond-let
   :vc (:url "https://github.com/tarsius/cond-let"))
 
